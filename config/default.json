@@ -1,0 +1,7 @@
+{
+  "install": {
+    "claude_skills_path": "~/.claude/skills",
+    "codex_skills_path": "~/.agents/skills",
+    "mode": "global"
+  }
+}

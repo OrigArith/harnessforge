@@ -1,0 +1,23 @@
+{
+  "name": "harnessforge",
+  "displayName": "HarnessForge",
+  "version": "0.2.0",
+  "description": "Forge your agent's harness. A skill pack that teaches coding agents to build production-grade skills, MCP servers, and plugins following best practices.",
+  "author": {
+    "name": "HarnessForge Contributors",
+    "url": "https://github.com/OrigArith/harnessforge"
+  },
+  "repository": "https://github.com/OrigArith/harnessforge",
+  "engines": {
+    "claude-code": ">=1.0.0"
+  },
+  "skills": [
+    { "name": "forge-init", "path": "../../skills/forge-init/SKILL.md" },
+    { "name": "forge-skill", "path": "../../skills/forge-skill/SKILL.md" },
+    { "name": "forge-mcp", "path": "../../skills/forge-mcp/SKILL.md" },
+    { "name": "forge-ship", "path": "../../skills/forge-ship/SKILL.md" },
+    { "name": "forge-adapt", "path": "../../skills/forge-adapt/SKILL.md" }
+  ],
+  "permissions": [],
+  "keywords": ["harness", "agent", "skills", "mcp", "plugin", "best-practices", "harness-engineering"]
+}

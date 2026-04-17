@@ -1,0 +1,136 @@
+# SECURITY.md Template — Agent Ecosystem Projects
+
+Copy this template into your project root as `SECURITY.md`. Replace all `{{PLACEHOLDER}}` markers with project-specific values.
+
+---
+
+```markdown
+# Security Policy
+
+## Supported Versions
+
+| Version | Supported |
+|---------|-----------|
+| {{CURRENT_MAJOR}}.x | Yes — full security support |
+| {{PREVIOUS_MAJOR}}.x | Security fixes only until {{EOL_DATE}} |
+| < {{PREVIOUS_MAJOR}}.0 | No — unsupported |
+
+## Reporting a Vulnerability
+
+**Do NOT report security vulnerabilities through public issues.**
+
+### Preferred Method
+
+Use GitHub Private Vulnerability Reporting:
+
+1. Navigate to the **Security** tab of this repository.
+2. Click **"Report a vulnerability"**.
+3. Provide a description, reproduction steps, and any relevant logs or screenshots.
+
+### Alternate Method
+
+Send an email to **{{SECURITY_EMAIL}}**.
+
+- PGP encryption is supported. Public key: [{{PGP_KEY_FILENAME}}](./{{PGP_KEY_FILENAME}})
+- Include "SECURITY" in the subject line.
+
+## Accepted Report Scope
+
+We accept reports for the following vulnerability categories:
+
+### Code-Level Vulnerabilities
+- Command injection / Remote Code Execution (RCE)
+- Authentication bypass / privilege escalation
+- Sensitive data leakage (tokens, API keys, PII)
+- Path traversal / unauthorized file access
+- Server-Side Request Forgery (SSRF)
+
+### Agent-Ecosystem-Specific Vulnerabilities
+- **Prompt injection leading to tool misuse** — Crafted input via tool results, descriptions, or external content that causes the agent to invoke tools outside intended scope or with dangerous parameters.
+- **Tool description poisoning** — Malicious content embedded in tool descriptions that alters agent behavior (goal hijack, privilege escalation, data exfiltration).
+- **Cross-tool propagation** — Malicious content that enters through one tool's output and reaches another tool's input without sanitization.
+- **Memory / context poisoning** — Payloads that persist in long-term memory, caches, or vector stores and influence future agent behavior.
+- **Supply chain integrity** — Compromised dependencies, tampered SBOM, unsigned releases, poisoned registry metadata, or manipulated tool descriptions in third-party MCP servers.
+- **Approval bypass** — Techniques that cause the agent to execute side-effect operations without the required human approval.
+- **Token passthrough / confused deputy** — Scenarios where user credentials are forwarded to downstream services without proper audience validation.
+
+### Not Sure If It's Exploitable?
+
+Report it anyway. We prefer to receive uncertain reports over missing real vulnerabilities.
+
+## Response SLA
+
+| Stage | Timeline | Notes |
+|-------|----------|-------|
+| Acknowledgment | 3 business days | We confirm receipt and assign a tracking ID |
+| Initial Triage | 7 days | Severity classification: Critical / High / Medium / Low |
+| Fix — Critical / High | 30 days | Patch or mitigation published |
+| Fix — Medium / Low | 90 days | Patch or mitigation published |
+| Status Updates | Every 14 days | If fix exceeds the above timelines |
+
+## Severity Classification
+
+We use the following criteria for agent ecosystem projects:
+
+| Severity | Criteria |
+|----------|----------|
+| **Critical** | Remote code execution, credential exfiltration, unauthenticated privilege escalation |
+| **High** | Prompt injection leading to unauthorized tool execution, auth bypass, PII leakage |
+| **Medium** | Information disclosure (non-credential), approval bypass for non-destructive actions, supply chain weakness |
+| **Low** | Theoretical attacks requiring unlikely preconditions, informational findings |
+
+## CVE Policy
+
+We request CVE identifiers for vulnerabilities that affect published releases in these categories:
+
+- Command injection / RCE
+- Authentication bypass
+- Unauthorized read/write access
+- Sensitive data leakage (credentials, PII)
+- Remote code execution via prompt injection chains
+
+CVE identifiers are published in the GitHub Security Advisory alongside the fix.
+
+## Interim Mitigations
+
+Before a patch is available, we provide interim mitigation guidance in the advisory. Examples include:
+
+- Disabling specific tools
+- Downgrading to a known-safe version
+- Applying configuration changes
+- Restricting network access or file system scope
+
+## Coordinated Disclosure
+
+We follow coordinated disclosure practices:
+
+1. We work with the reporter to validate and reproduce the vulnerability.
+2. We develop a fix in a private advisory space.
+3. We agree on a disclosure timeline with the reporter.
+4. We publish the fix, advisory, and CVE simultaneously.
+
+## Security Contact
+
+- **Primary:** GitHub Private Vulnerability Reporting (see above)
+- **Email:** {{SECURITY_EMAIL}}
+- **PGP Key:** [{{PGP_KEY_FILENAME}}](./{{PGP_KEY_FILENAME}})
+
+## Acknowledgments
+
+We credit reporters in security advisories unless they prefer to remain anonymous. If you would like to be credited, include your preferred name and affiliation in your report.
+
+{{ADDITIONAL_SECTIONS}}
+```
+
+---
+
+## Placeholder Reference
+
+| Placeholder | Description | Example |
+|-------------|-------------|---------|
+| `{{CURRENT_MAJOR}}` | Current major version number | `2` |
+| `{{PREVIOUS_MAJOR}}` | Previous major version number | `1` |
+| `{{EOL_DATE}}` | End-of-life date for previous major | `2026-12-31` |
+| `{{SECURITY_EMAIL}}` | Security team email address | `security@example.com` |
+| `{{PGP_KEY_FILENAME}}` | PGP public key filename | `security-pgp-key.asc` |
+| `{{ADDITIONAL_SECTIONS}}` | Project-specific sections (bug bounty, compliance, etc.) | *(remove if unused)* |

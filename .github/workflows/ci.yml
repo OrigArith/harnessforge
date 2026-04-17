@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-skills:
+    name: Validate Skills
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate all SKILL.md files
+        run: bash tests/smoke/validate-skills.sh
+
+      - name: Run validator regressions
+        run: bash tests/smoke/validate-skill-regressions.sh
+
+      - name: Check project consistency
+        run: bash tests/smoke/check-project-consistency.sh
+
+      - name: Verify plugin manifests match
+        run: |
+          claude_version=$(grep '"version"' adapters/claude/.claude-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          codex_version=$(grep '"version"' adapters/codex/.codex-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$claude_version" != "$codex_version" ]; then
+            echo "::error::Version mismatch: Claude=$claude_version, Codex=$codex_version"
+            exit 1
+          fi
+          echo "Versions match: $claude_version"
+
+      - name: Test install script (dry run)
+        run: |
+          # Verify script parses without error
+          bash -n scripts/install.sh
+          echo "Install script syntax OK"
