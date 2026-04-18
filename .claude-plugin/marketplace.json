@@ -9,7 +9,7 @@
     {
       "name": "harnessforge",
       "description": "5 scene-driven skills for agent harness engineering",
-      "version": "0.5.0",
+      "version": "0.6.0",
       "source": "./"
     }
   ]

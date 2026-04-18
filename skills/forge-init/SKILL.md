@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.5.0"
+  version: "0.6.0"
   category: project-setup
 allowed-tools: Bash Read Edit Write Glob Grep
 ---

@@ -8,6 +8,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-04-18
+
+### Changed
+- README: Fixed Claude Code install command. Replaced invalid
+  `claude plugin install <url>` with correct two-step flow:
+  `claude plugin marketplace add` then `claude plugin install`.
+- forge-init: Templates A/C directory trees now include
+  `.codex-plugin/plugin.json` in Codex adapter directories
+  (official Codex entry point was missing since v0.4.0).
+- forge-adapt: Pattern B Codex adapter section now positions
+  `.codex-plugin/plugin.json` as the primary official entry point
+  with `install.sh` as manual alternative.
+- forge-adapt: Pattern B directory tree example updated to include
+  `.codex-plugin/` in Codex adapter directory.
+
 ## [0.5.0] - 2026-04-18
 
 ### Breaking
@@ -102,7 +117,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ---
 
-[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/OrigArith/harnessforge/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/OrigArith/harnessforge/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/OrigArith/harnessforge/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/OrigArith/harnessforge/compare/v0.2.0...v0.3.0

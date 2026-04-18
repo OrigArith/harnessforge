@@ -163,6 +163,8 @@ deploy-guardian/
 │   │       └── hooks.json                 # [claude] Hook registration config
 │   │
 │   └── codex/                             # [codex]  Codex adapter root
+│       ├── .codex-plugin/
+│       │   └── plugin.json                # [codex]  Codex plugin manifest (official entry)
 │       ├── install.sh                     # [codex]  Clone + path substitution script
 │       └── README.md                      # [codex]  Codex-specific install instructions
 │
@@ -177,8 +179,8 @@ deploy-guardian/
 |----------|-------|------------|
 | Shared files | 19 | ~79% |
 | Claude Code specific | 3 | ~13% |
-| Codex specific | 3 | ~13% |
-| **Total** | **25** | -- |
+| Codex specific | 4 | ~15% |
+| **Total** | **26** | -- |
 
 Note: `agents/openai.yaml` inside skills counts as Codex-specific even though it lives in the shared `skills/` directory.
 
@@ -220,5 +222,5 @@ Line count: 24 lines (under the 30-line guideline).
 1. **Adapters directory is necessary.** The project has hooks that differ per platform and an MCP server that needs platform-specific configuration.
 2. **Shared skill path uses `../../skills/`.** This works for direct install but will NOT survive marketplace cache isolation. Document this limitation.
 3. **Hook scripts are shared; hook configs are not.** The actual scripts in `hooks/` are platform-agnostic. The registration configs are platform-specific because event names and handler formats differ.
-4. **Codex uses an install script, not a manifest.** `adapters/codex/install.sh` copies content and performs path substitution, following the agentsys pattern.
+4. **Codex has both official manifest and manual install.** `adapters/codex/.codex-plugin/plugin.json` is the official Codex entry point. `install.sh` provides clone + path substitution as a manual alternative for non-marketplace distribution.
 5. **agents/openai.yaml coexists peacefully.** It lives inside `skills/deploy/agents/` alongside the shared SKILL.md. Claude Code ignores it.

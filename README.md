@@ -24,7 +24,11 @@ When your agent activates a HarnessForge skill, it gains access to curated best 
 ### As a Claude Code plugin
 
 ```bash
-claude plugin install https://github.com/OrigArith/harnessforge
+# Step 1: Add the marketplace
+claude plugin marketplace add OrigArith/harnessforge
+
+# Step 2: Install the plugin
+claude plugin install harnessforge@harnessforge
 ```
 
 ### As a Codex plugin

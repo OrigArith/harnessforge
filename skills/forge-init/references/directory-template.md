@@ -40,7 +40,9 @@ Use when the project exposes tools or data to agents via the MCP protocol.
 │   │   ├── CLAUDE.md                  #   @AGENTS.md + Claude-specific rules
 │   │   └── plugin.json               #   Claude Code manifest (<30 lines)
 │   ├── codex/                         # Codex adapter
-│   │   ├── install.sh                 #   Clone + path substitution script
+│   │   ├── .codex-plugin/
+│   │   │   └── plugin.json            #   Codex plugin manifest (official entry)
+│   │   ├── install.sh                 #   Clone + path substitution (manual install)
 │   │   ├── README.md                  #   Codex install instructions
 │   │   └── agents/
 │   │       └── openai.yaml            #   Codex vendor extensions
@@ -166,7 +168,9 @@ Use when shipping a product-grade installable plugin with skills + MCP tools + l
 │   │       ├── on-tool-start.sh
 │   │       └── on-notification.sh
 │   ├── codex/
-│   │   ├── install.sh                 #   Clone + path substitution script
+│   │   ├── .codex-plugin/
+│   │   │   └── plugin.json            #   Codex plugin manifest (official entry)
+│   │   ├── install.sh                 #   Clone + path substitution (manual install)
 │   │   ├── README.md                  #   Codex install instructions
 │   │   ├── agents/
 │   │   │   └── openai.yaml

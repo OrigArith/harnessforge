@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.5.0"
+  version: "0.6.0"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -338,7 +338,24 @@ rm ~/.agents/skills/{{PROJECT_NAME}}
 
 ### For Pattern B (Adapters Directory)
 
-For Pattern B, the adapter directory is the plugin root. Create `adapters/codex/.codex-plugin/plugin.json` with paths relative to the adapter root. Additionally, provide an install script for manual distribution:
+For Pattern B, the adapter directory is the plugin root. The primary entry point is `.codex-plugin/plugin.json` inside the adapter directory.
+
+#### Step 1: Create `adapters/codex/.codex-plugin/plugin.json`
+
+```json
+{
+  "name": "{{PROJECT_NAME}}",
+  "version": "{{VERSION}}",
+  "description": "{{DESCRIPTION}}",
+  "author": { "name": "{{AUTHOR}}", "url": "{{URL}}" },
+  "license": "MIT",
+  "skills": "../../skills/"
+}
+```
+
+Note: `../../skills/` paths work for direct install but will NOT survive marketplace cache isolation. Document this limitation in README and provide the install script below as an alternative.
+
+#### Step 2: Create `adapters/codex/install.sh` (manual install alternative)
 
 Create `adapters/codex/install.sh` that copies content and performs path variable substitution:
 
