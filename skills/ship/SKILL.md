@@ -1,11 +1,11 @@
 ---
-name: forge-ship
+name: ship
 description: "Use this skill when preparing an agent ecosystem project for release, checking release readiness, setting up CI/CD, choosing a license, writing CHANGELOG, reviewing versioning strategy, performing a security audit, or writing SECURITY.md. Covers the 54-item publishing checklist across 5 lifecycle stages, SemVer for agent projects (description change = breaking change), CI/CD four gates, CHANGELOG conventions, LICENSE selection, OWASP Agentic Top 10, supply chain security, and prompt injection defense. Trigger keywords: release, publish, ship, version, SemVer, CHANGELOG, CI/CD, license, checklist, security audit, security review, SECURITY.md, prompt injection, supply chain, OWASP, permissions, vulnerability, 发布, 发版, 版本管理, 安全审计, 安全合规."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.6.0"
+  version: "0.7.0"
   category: release-management
 allowed-tools: Bash Read Edit Write Glob Grep
 ---

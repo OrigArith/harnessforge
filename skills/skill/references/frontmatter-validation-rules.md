@@ -28,7 +28,7 @@ assert '--' not in name
 assert name == parent_directory_name
 ```
 
-**Valid examples:** `api-migration-helper`, `forge-skill`, `my-tool`, `a1b2`
+**Valid examples:** `api-migration-helper`, `skill`, `my-tool`, `a1b2`
 
 **Invalid examples:** `-starts-with-hyphen`, `ends-with-hyphen-`, `has--double-hyphen`, `HasUpperCase`, `has_underscore`, `has spaces`, (empty string), (65+ characters)
 

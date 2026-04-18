@@ -65,8 +65,3 @@ jobs:
             exit 1
           fi
 
-      - name: Test install script (dry run)
-        run: |
-          # Verify script parses without error
-          bash -n scripts/install.sh
-          echo "Install script syntax OK"

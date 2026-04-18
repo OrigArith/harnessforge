@@ -1,16 +1,16 @@
 ---
-name: forge-init
+name: init
 description: "Use this skill when initializing a new agent ecosystem project, scaffolding project structure, writing AGENTS.md, writing CLAUDE.md, reviewing directive files, or creating agent instruction files. Covers directory structure, root-level files, configuration strategy, template selection, directive authoring principles, and self-check protocols. Trigger keywords: project init, scaffold, create project, new repo, directory structure, project template, AGENTS.md, CLAUDE.md, directive file, instruction file, agent instructions, 项目初始化, 目录结构, 指令文件."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.6.0"
+  version: "0.7.0"
   category: project-setup
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
 
-# forge-init
+# forge:init
 
 This skill initializes the directory structure and root-level files for an agent ecosystem project.
 It supports three project archetypes: MCP Server, Skill Pack, and Full Plugin.

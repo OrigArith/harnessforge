@@ -1,16 +1,16 @@
 ---
-name: forge-mcp
+name: mcp
 description: "Use this skill when developing a new MCP server, designing MCP tools, writing tool descriptions, or reviewing an existing MCP server's quality. Covers the three MCP primitives (Tools, Resources, Prompts), tool description writing standards, parameter schema requirements, structured error handling, transport selection (stdio vs Streamable HTTP), OAuth 2.1 integration, and MCP Inspector testing. Also use when debugging an existing MCP server — agent calls wrong tools, tools not discovered, capability negotiation failures, or tool description quality issues. Trigger keywords: MCP, MCP server, Model Context Protocol, tool description, tool schema, MCP tool, Resources, Prompts, .mcp.json, Inspector, MCP开发, debug MCP, MCP tool not working, agent calls wrong tool, tool description review, MCP调试, 工具调用错误."
 license: MIT
 compatibility: "Requires Node.js >= 18 or Python >= 3.10 for MCP server development. MCP SDK (@modelcontextprotocol/sdk or mcp[cli]) recommended."
 metadata:
   author: harnessforge
-  version: "0.6.0"
+  version: "0.7.0"
   category: mcp-development
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
 
-# forge-mcp: MCP Server Development Skill
+# forge:mcp — MCP Server Development Skill
 
 MCP (Model Context Protocol) is the unified tool and data layer for agent ecosystems. It defines how AI agents discover, understand, and invoke external capabilities. Every MCP server exposes functionality through exactly three primitives: **Tools** (model-controlled actions), **Resources** (application-driven context), and **Prompts** (user-controlled templates). Treat tool descriptions as the primary API contract -- agents rely on them to decide when and how to call your server.
 

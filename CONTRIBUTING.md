@@ -16,9 +16,6 @@ cd harnessforge
 
 # Validate all skills
 ./tests/smoke/validate-skills.sh
-
-# Install locally for testing
-./scripts/install.sh --project
 ```
 
 ### Requirements
@@ -30,7 +27,7 @@ cd harnessforge
 
 ### Adding a New Skill
 
-1. Create `skills/forge-<name>/SKILL.md` with all 6 frontmatter fields
+1. Create `skills/<name>/SKILL.md` with all 6 frontmatter fields
 2. Add `references/` for templates and detailed content
 3. Add `examples/` for good/bad pattern illustrations
 4. Ensure SKILL.md body < 500 lines
@@ -48,7 +45,7 @@ cd harnessforge
 
 - Frontmatter validation failures
 - Broken references (SKILL.md points to non-existent file)
-- Install script platform compatibility
+- Plugin manifest compatibility
 
 ## Code Standards
 
@@ -65,7 +62,7 @@ In agent ecosystem projects, these changes require a **major version bump**:
 | Change | Why it breaks |
 |--------|--------------|
 | Modify a skill's `description` | Alters agent trigger matching behavior |
-| Rename a skill directory | Breaks existing `/forge-*` slash commands |
+| Rename a skill directory | Breaks existing `/forge:*` slash commands |
 | Remove a reference file | Breaks conditional loading in SKILL.md |
 | Change plugin.json `skills` paths | Breaks installed plugin discovery |
 
@@ -73,7 +70,7 @@ Non-breaking: adding new skills, adding optional references, fixing typos in bod
 
 ## PR Process
 
-1. Fork and create a branch: `git checkout -b feat/forge-<scope>`
+1. Fork and create a branch: `git checkout -b feat/<scope>`
 2. Make changes following the standards above
 3. Run `./tests/smoke/validate-skills.sh` — all must pass
 4. Update CHANGELOG.md

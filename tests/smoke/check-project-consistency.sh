@@ -19,12 +19,10 @@ if [[ -n "$ds_store_path" ]]; then
     fail "unexpected .DS_Store tracked in repository: ${ds_store_path#$PROJECT_ROOT/}"
 fi
 
-tmp_home="$(mktemp -d)"
-install_output="$(HOME="$tmp_home" bash "$PROJECT_ROOT/scripts/install.sh" --global)"
-rm -rf "$tmp_home"
-
-[[ "$install_output" == *"/forge-init"* ]] || fail "install script should point users to /forge-init"
-[[ "$install_output" != *"/forge-scaffold"* ]] || fail "install script should not mention removed /forge-scaffold command"
+skill_count="$(ls -d "$PROJECT_ROOT"/skills/*/SKILL.md 2>/dev/null | wc -l | tr -d ' ')"
+if [[ "$skill_count" -ne 5 ]]; then
+    fail "expected 5 skills but found $skill_count"
+fi
 
 if grep -q '/forge-scaffold' "$PROJECT_ROOT/CLAUDE.md"; then
     fail "CLAUDE.md still references removed /forge-scaffold command"

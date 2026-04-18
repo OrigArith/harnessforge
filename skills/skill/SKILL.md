@@ -1,11 +1,11 @@
 ---
-name: forge-skill
+name: skill
 description: "Use this skill when creating a new SKILL.md file, reviewing an existing skill's quality, or packaging domain knowledge as a reusable agent skill. Covers the 6 core frontmatter fields, body writing rules, Progressive Disclosure three-tier model, token budgets, vendor extensions for Claude Code and Codex, and the six-step publishing flow. Trigger keywords: SKILL.md, create skill, skill authoring, skill review, frontmatter, Progressive Disclosure, skill quality, 技能开发, 技能编写."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.6.0"
+  version: "0.7.0"
   category: skill-development
 allowed-tools: Bash Read Edit Write Glob Grep
 ---

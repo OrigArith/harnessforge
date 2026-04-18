@@ -1,24 +1,24 @@
 query,expected_skill,should_trigger
-"Initialize a new project with AGENTS.md and CLAUDE.md",forge-init,true
-"Create the directory structure for a new agent ecosystem project",forge-init,true
-"Write an AGENTS.md file for this repository",forge-init,true
-"Scaffold a new project from template",forge-init,true
-"Create a new SKILL.md file for a deployment workflow",forge-skill,true
-"Review my skill's description for trigger accuracy",forge-skill,true
-"Check if my SKILL.md frontmatter is correct",forge-skill,true
-"Test whether my skill triggers on the right prompts",forge-skill,true
-"Build a new MCP server for our internal API",forge-mcp,true
-"Debug why the agent keeps calling the wrong MCP tool",forge-mcp,true
-"Write tool descriptions for my MCP server",forge-mcp,true
-"Run MCP Inspector to test my server",forge-mcp,true
-"Prepare this project for release",forge-ship,true
-"Run a security audit before publishing",forge-ship,true
-"Update the CHANGELOG and bump the version",forge-ship,true
-"Check the OWASP agentic security risks",forge-ship,true
-"Add Claude Code plugin support to this project",forge-adapt,true
-"Create a Codex plugin manifest",forge-adapt,true
-"Set up cross-platform adapters for Claude and Codex",forge-adapt,true
-"Write a plugin.json for Claude Code",forge-adapt,true
+"Initialize a new project with AGENTS.md and CLAUDE.md",init,true
+"Create the directory structure for a new agent ecosystem project",init,true
+"Write an AGENTS.md file for this repository",init,true
+"Scaffold a new project from template",init,true
+"Create a new SKILL.md file for a deployment workflow",skill,true
+"Review my skill's description for trigger accuracy",skill,true
+"Check if my SKILL.md frontmatter is correct",skill,true
+"Test whether my skill triggers on the right prompts",skill,true
+"Build a new MCP server for our internal API",mcp,true
+"Debug why the agent keeps calling the wrong MCP tool",mcp,true
+"Write tool descriptions for my MCP server",mcp,true
+"Run MCP Inspector to test my server",mcp,true
+"Prepare this project for release",ship,true
+"Run a security audit before publishing",ship,true
+"Update the CHANGELOG and bump the version",ship,true
+"Check the OWASP agentic security risks",ship,true
+"Add Claude Code plugin support to this project",adapt,true
+"Create a Codex plugin manifest",adapt,true
+"Set up cross-platform adapters for Claude and Codex",adapt,true
+"Write a plugin.json for Claude Code",adapt,true
 "Help me write a REST API endpoint",none,false
 "Fix the login bug in the authentication module",none,false
 "Explain how React hooks work",none,false

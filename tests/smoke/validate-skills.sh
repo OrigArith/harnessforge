@@ -265,7 +265,8 @@ echo "  HarnessForge Skill Validation"
 echo "========================================="
 echo ""
 
-for skill_dir in "$SKILLS_DIR"/forge-*; do
+for skill_dir in "$SKILLS_DIR"/*/; do
+    skill_dir="${skill_dir%/}"
     if [[ -d "$skill_dir" ]]; then
         check_skill "$skill_dir"
         echo ""

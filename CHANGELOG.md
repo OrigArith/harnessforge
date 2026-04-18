@@ -8,6 +8,23 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-18
+
+### Breaking
+- Plugin name changed from `harnessforge` to `forge`.
+  Skills now invoked as `/forge:init`, `/forge:skill`, `/forge:mcp`,
+  `/forge:ship`, `/forge:adapt`.
+- Skill directories renamed: `forge-init` → `init`, `forge-skill` → `skill`,
+  `forge-mcp` → `mcp`, `forge-ship` → `ship`, `forge-adapt` → `adapt`.
+- Removed `scripts/install.sh`. Plugin install is now the only
+  supported installation method for Claude Code.
+
+### Changed
+- README: Simplified to plugin-only install flow.
+- All documentation updated to use `/forge:init` invocation format.
+- AGENTS.md and CLAUDE.md updated to reflect new skill names and invocation format.
+- Smoke tests updated to scan `skills/*/` instead of `skills/forge-*/`.
+
 ## [0.6.0] - 2026-04-18
 
 ### Changed

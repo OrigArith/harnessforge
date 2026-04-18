@@ -1,11 +1,11 @@
 ---
-name: forge-adapt
+name: adapt
 description: "Use this skill when adding Claude Code or Codex platform support to an agent ecosystem project, writing plugin.json manifests, setting up cross-platform directory structure, or reviewing platform compatibility. Covers three packaging patterns (root-level manifests, adapters directory, content triplication), the five-layer compatibility matrix, Claude Code plugin.json + marketplace.json specification, Codex .codex-plugin/plugin.json specification, and manifest field mapping between platforms. Trigger keywords: platform adapter, Claude Code plugin, Codex plugin, plugin.json, marketplace.json, cross-platform, manifest, compatibility, adapters, 平台适配, 跨平台兼容."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.6.0"
+  version: "0.7.0"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---

@@ -7,9 +7,9 @@
   },
   "plugins": [
     {
-      "name": "harnessforge",
+      "name": "forge",
       "description": "5 scene-driven skills for agent harness engineering",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "source": "./"
     }
   ]
