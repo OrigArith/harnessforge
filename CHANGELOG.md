@@ -8,6 +8,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.7.1] - 2026-04-19
+
+### Fixed
+- forge:adapt: Compatibility matrix and Codex references updated to reflect
+  `.codex-plugin/plugin.json` as the official Codex manifest entry point.
+  Previously described Codex distribution as "clone + symlink" only.
+- forge:adapt: `references/codex-plugin-json-template.md` rewritten to position
+  `.codex-plugin/plugin.json` as the primary Pattern A entry (was incorrectly
+  directing to `.codex/INSTALL.md`).
+- forge:adapt: `references/compatibility-matrix.md` Codex manifest location
+  corrected from "Clone + symlink" to `.codex-plugin/plugin.json`.
+
 ## [0.7.0] - 2026-04-18
 
 ### Breaking

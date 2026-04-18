@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.7.0"
+  version: "0.7.1"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -111,7 +111,7 @@ Before writing any adapter, assess which layers of your project can be shared an
 | Instruction files | ~85% | `AGENTS.md` content body | Entry-point filename (`CLAUDE.md` vs `AGENTS.md`) | Claude Code uses `@AGENTS.md` import syntax; Codex reads `AGENTS.md` natively |
 | Skills | ~80-90% | `SKILL.md` frontmatter + instruction body | Vendor-specific frontmatter fields | Codex has `agents/openai.yaml` per skill; unknown frontmatter fields are safely ignored |
 | MCP | ~90% | MCP Server source code; `.mcp.json` as shared description | Client-side config format (JSON vs TOML) | Claude Code reads `.mcp.json` natively; Codex uses `config.toml` with `[mcp_servers]` blocks |
-| Plugins | <50% | Shared payload (`skills/`, `src/`, assets) | Manifest format and required fields | Claude Code = directory content pack with marketplace; Codex = clone + symlink; definitions are fundamentally different |
+| Plugins | <50% | Shared payload (`skills/`, `src/`, assets) | Manifest format and required fields | Claude Code = `.claude-plugin/plugin.json` + marketplace; Codex = `.codex-plugin/plugin.json` (official manifest); definitions differ in required fields and distribution flow |
 | Hooks | <50% | Design intent (e.g., "block destructive commands") | Event names, handler types, config format | Claude Code has ~22 events + 4 handler types (stable); Codex hooks are experimental with limited events |
 
 Consult `references/compatibility-matrix.md` for the full per-layer analysis when you need deeper detail.
@@ -303,7 +303,7 @@ See `references/codex-plugin-json-template.md` for the complete field reference.
 
 #### Step 2: Write .codex/INSTALL.md (manual install alternative)
 
-Until the public Codex marketplace opens, provide clone + symlink instructions:
+Provide clone + symlink instructions as a manual install alternative alongside `.codex-plugin/plugin.json`:
 
 ```markdown
 # Installing {{PROJECT_NAME}} for Codex
@@ -432,7 +432,7 @@ Follow these rules whenever you create or modify platform adapters.
 
 6. **Never hardcode environment-specific values in manifests.** Use `${CLAUDE_PLUGIN_ROOT}` for Claude Code. Use environment variables for Codex. Keep credentials out of committed files.
 
-7. **Test each adapter independently.** Install the Claude Code adapter using `claude plugin validate`. Install the Codex adapter by following the clone + symlink instructions. Verify that skills are discovered.
+7. **Test each adapter independently.** Install the Claude Code adapter using `claude plugin validate`. Install the Codex adapter using `codex install ./` or by following the clone + symlink instructions in `.codex/INSTALL.md`. Verify that skills are discovered.
 
 8. **Keep AGENTS.md as the single source of truth for instructions.** Claude Code imports it via `CLAUDE.md` with `@AGENTS.md`. Codex reads it directly. Do not maintain two divergent instruction files.
 
