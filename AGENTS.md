@@ -9,14 +9,15 @@ Tech stack: Markdown (SKILL.md) + Shell scripts. No build step required.
 ## Directory Guide
 
 - `skills/` — 5 skill directories, each with SKILL.md + references/ + optional examples/
-- `adapters/` — Platform-specific plugin manifests (Claude Code, Codex)
+- `.claude-plugin/` — Claude Code plugin manifest
+- `.codex-plugin/` — Codex plugin manifest
 - `scripts/` — Install/uninstall helpers
 - `tests/smoke/` — Skill validation scripts
 - `config/` — Default configuration
 
 ## Code Standards
 
-- All SKILL.md files must have valid frontmatter with 6 core fields: name, description, license, compatibility, metadata, allowed-tools
+- All SKILL.md files must have valid frontmatter. Required per open standard: name, description. Required per HarnessForge convention: all 6 fields (name, description, license, compatibility, metadata, allowed-tools)
 - Skill `name` must match its parent directory name (e.g., `forge-init/SKILL.md` → `name: forge-init`)
 - Skill `description` must start with "Use this skill when"
 - Each SKILL.md body must stay under 500 lines / 5,000 tokens

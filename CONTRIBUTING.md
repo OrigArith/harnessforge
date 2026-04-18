@@ -35,7 +35,7 @@ cd harnessforge
 3. Add `examples/` for good/bad pattern illustrations
 4. Ensure SKILL.md body < 500 lines
 5. Update `AGENTS.md` Available Skills table
-6. Update both plugin.json manifests in `adapters/`
+6. Update both plugin.json manifests (`.claude-plugin/` and `.codex-plugin/`)
 
 ### Improving Existing Skills
 

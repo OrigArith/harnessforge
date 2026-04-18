@@ -8,6 +8,30 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-18
+
+### Breaking
+- Removed `adapters/` directory. Plugin manifests now live at repo root
+  (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`), making the
+  repository a self-contained, marketplace-installable plugin package.
+
+### Changed
+- Plugin manifests use `"./skills/"` paths (marketplace-compatible) instead
+  of `"../../skills/"` (which broke on marketplace install due to cache isolation).
+- README: replaced "battle-tested" with "curated"; added v0.x early-stage
+  disclaimer; downgraded unverified platform support claims to "Tested".
+- forge-skill: frontmatter section now explicitly frames the 6-field set as
+  "HarnessForge's opinionated best-practice profile" rather than implying it
+  is the open standard requirement.
+- AGENTS.md: clarified that 6-field frontmatter is a HarnessForge convention,
+  not an open standard mandate (only name + description are required per spec).
+- Install instructions: plugin install is now primary method; symlink install
+  is secondary with a warning about clone persistence.
+
+### Added
+- Plugin install support via `claude plugin install` and `codex install`.
+- Trigger eval scaffold in `tests/evals/` with sample test matrix.
+
 ## [0.2.0] - 2026-04-15
 
 ### Added
@@ -17,8 +41,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
   - `forge-mcp` — MCP server development + diagnostic debugging (Quick Diagnosis, Conformance Testing)
   - `forge-ship` — release readiness + security audit (OWASP Agentic Top 10, supply chain, prompt injection defense)
   - `forge-adapt` — cross-platform adapter creation (Claude Code + Codex)
-- Claude Code plugin manifest (`adapters/claude/`)
-- Codex plugin manifest (`adapters/codex/`)
+- Claude Code plugin manifest
+- Codex plugin manifest
 - Install script with `--global` / `--project` / `--uninstall` modes
 - Smoke test validation suite (skill validation, regression tests, project consistency checks)
 - CI workflow for skill validation and manifest version matching
@@ -26,5 +50,6 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ---
 
-[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/OrigArith/harnessforge/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/OrigArith/harnessforge/releases/tag/v0.2.0

@@ -6,28 +6,34 @@ Your AI agent builds skills, MCP servers, and plugins. HarnessForge ensures they
 
 *Don't just prompt. Forge.*
 
+> **Status**: v0.x — early stage. Conventions are opinionated and may evolve based on community feedback and platform changes.
+
 ---
 
 ## What is this?
 
 HarnessForge is a **skill pack** — a collection of 5 installable skills that teach your coding agent the engineering discipline of building production-grade agent ecosystem projects.
 
-When your agent activates a HarnessForge skill, it gains access to battle-tested best practices for:
+When your agent activates a HarnessForge skill, it gains access to curated best practices for:
 - Structuring projects that agents can discover, understand, and safely invoke
 - Writing SKILL.md, AGENTS.md, and MCP tool descriptions that actually work
 - Shipping with security, cross-platform compatibility, and proper versioning
 
 ## Install
 
-### Let your agent do it
+### As a Claude Code plugin
 
-Copy this prompt to your coding agent (Claude Code, Codex, etc.):
-
-```
-Clone https://github.com/OrigArith/harnessforge.git and run ./scripts/install.sh --global to install all skills. After install, verify by listing ~/.claude/skills/forge-* and confirm 5 skills are symlinked.
+```bash
+claude plugin install https://github.com/OrigArith/harnessforge
 ```
 
-### Or install manually
+### As a Codex plugin
+
+```bash
+codex install https://github.com/OrigArith/harnessforge
+```
+
+### Or install via symlinks (alternative)
 
 ```bash
 git clone https://github.com/OrigArith/harnessforge.git
@@ -35,6 +41,8 @@ cd harnessforge
 ./scripts/install.sh --global
 ls ~/.claude/skills/forge-*   # should show 5 symlinks
 ```
+
+> **Note**: Symlink install requires the cloned repository to remain in place. Moving or deleting the clone will break all installed skill links.
 
 ### Which skill do I need?
 
@@ -72,9 +80,9 @@ After installation, invoke skills as slash commands in your coding agent:
 
 | Platform | Min Version | Status |
 |----------|-------------|--------|
-| Claude Code | 1.0+ | Fully supported |
-| Codex CLI | 0.1+ | Fully supported |
-| OpenCode | 0.1+ | Compatible (auto-discovers from `.claude/skills/` and `.agents/skills/`) |
+| Claude Code | 1.0+ | Tested |
+| Codex CLI | 0.1+ | Tested |
+| OpenCode | 0.1+ | Compatible, untested (auto-discovers from `.claude/skills/` and `.agents/skills/`) |
 
 ## How it works
 
@@ -88,12 +96,11 @@ HarnessForge follows the **Progressive Disclosure** model:
 
 ```
 harnessforge/
+├── .claude-plugin/      Claude Code plugin manifest
+├── .codex-plugin/       Codex plugin manifest
 ├── skills/              5 skill directories (core content)
-├── adapters/            Platform-specific thin shells
-│   ├── claude/          Claude Code plugin manifest
-│   └── codex/           Codex plugin manifest
 ├── scripts/             Install/uninstall helpers
-├── tests/               Smoke tests
+├── tests/               Smoke tests + trigger eval scaffold
 ├── config/              Default configuration
 ├── AGENTS.md            Cross-platform agent directives
 ├── CLAUDE.md            Claude Code entry shell

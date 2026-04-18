@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.2.0"
+  version: "0.3.0"
   category: skill-development
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -19,8 +19,8 @@ Your goal is to teach an agent how to think and act in a specific domain, not to
 
 ## Frontmatter Specification
 
-Every SKILL.md begins with a YAML frontmatter block containing exactly 6 core fields.
-Only `name` and `description` are required. All vendor-specific extensions belong outside core spec.
+The Agent Skills open standard defines 6 frontmatter fields, of which only `name` and `description` are required.
+HarnessForge recommends using all 6 as an opinionated best-practice profile for production-grade skills. The additional 4 fields (license, compatibility, metadata, allowed-tools) are optional per the standard but provide valuable context for distribution, runtime prerequisites, and cross-platform discovery. Unknown frontmatter fields are safely ignored by platforms that do not support them.
 
 ### Field Reference
 
