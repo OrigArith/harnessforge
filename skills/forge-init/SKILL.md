@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.4.0"
+  version: "0.5.0"
   category: project-setup
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -72,9 +72,9 @@ Execute these steps in order when scaffolding a new project.
 
 2. **Create root directory.** Run `mkdir -p <project-name>` and `cd` into it. Initialize git: `git init`.
 
-3. **Generate directory tree.** Read `references/directory-template.md` for the chosen template. Create all directories using `mkdir -p`. For Template A, the key directories are: `src/tools/`, `src/resources/`, `src/utils/`, `tests/unit/`, `tests/contract/`, `tests/smoke/`, `config/`, `adapters/`, `.github/workflows/`. For Template B: `skills/<skill-name>/scripts/`, `skills/<skill-name>/references/`, `skills/<skill-name>/examples/`, `tests/skill-smoke/`, `adapters/`, `.github/workflows/`. For Template C: both `skills/` and `src/` subtrees plus `tests/integration/`.
+3. **Generate directory tree.** Read `references/directory-template.md` for the chosen template. Create all directories using `mkdir -p`. For Template A: `src/tools/`, `src/resources/`, `src/utils/`, `tests/unit/`, `tests/contract/`, `tests/smoke/`, `config/`, `adapters/`, `.github/workflows/`. For Template B: `skills/<skill-name>/scripts/`, `skills/<skill-name>/references/`, `skills/<skill-name>/examples/`, `.claude-plugin/`, `.codex-plugin/`, `.codex/`, `tests/skill-smoke/`, `.github/workflows/`. For Template C: both `skills/` and `src/` subtrees plus `adapters/`, `tests/integration/`.
 
-4. **Create adapter subdirectories.** For each target platform, create `adapters/<platform>/`. Only create adapters the user explicitly requested. Do not generate adapters for platforms the user did not select.
+4. **Create platform directories.** For Template A/C: create `adapters/<platform>/` for each target platform. For Template B: create `.claude-plugin/`, `.codex-plugin/`, and `.codex/` at the project root (the repo IS the plugin root — no adapters/ directory). Only create directories for platforms the user explicitly requested.
 
 5. **Generate root-level files.** Create each file listed in the "Root-Level File Requirements" table below. Use the templates in `references/` as starting points:
    - Read `references/readme-template.md` when creating `README.md`.
@@ -87,13 +87,13 @@ Execute these steps in order when scaffolding a new project.
 
 6. **Generate config/default.json.** Include all configurable fields with safe defaults. For MCP servers, include: `capabilities` (with advanced features defaulting to `false`), `security.allowed_hosts` (default `[]`), `security.require_approval_for` (default `["write", "delete"]`), and `mcp.transport` (default `"stdio"`).
 
-7. **Generate platform manifests.** For each selected adapter, create the minimum viable manifest file inside `adapters/<platform>/`. Keep manifests under 30 lines. Do not embed UI metadata, brand colors, or default prompts in manifests.
+7. **Generate platform manifests.** For Template A/C: create the minimum viable manifest inside `adapters/<platform>/`. For Template B: create manifests at the project root (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`). Keep all manifests under 30 lines. Do not embed UI metadata, brand colors, or default prompts in manifests.
 
 8. **Generate CI workflows.** Create `.github/workflows/ci.yml` with lint + type-check + unit-test stages. For Template A and C, also create `release.yml` and `security.yml`. Add a platform smoke test matrix that covers each selected adapter.
 
 9. **Count root entries.** Run `ls -A <project-root> | wc -l` and verify the count is 15 or fewer. If it exceeds 15, consolidate files into subdirectories until compliant.
 
-10. **Run validation.** Verify: (a) `config/default.json` exists and is valid JSON; (b) `README.md` contains install commands in its first 30 lines; (c) no platform-specific files exist outside `adapters/`; (d) `skills/` and `src/` contain no imports from `adapters/`.
+10. **Run validation.** Verify: (a) `config/default.json` exists and is valid JSON (Template A/C only); (b) `README.md` contains install commands in its first 30 lines; (c) manifest placement matches template — root-level for Template B, `adapters/` for Template A/C; (d) `skills/` and `src/` contain no imports from platform-specific directories.
 
 ## Six Good Patterns / Six Anti-Patterns
 

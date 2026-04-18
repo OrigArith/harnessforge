@@ -10,8 +10,8 @@ fail() {
 }
 
 count="$(cd "$PROJECT_ROOT" && ls -A1 | wc -l | tr -d ' ')"
-if [[ "$count" -gt 17 ]]; then
-    fail "root directory has $count entries when counted with hidden files (max 17)"
+if [[ "$count" -gt 18 ]]; then
+    fail "root directory has $count entries when counted with hidden files (max 18)"
 fi
 
 ds_store_path="$(find "$PROJECT_ROOT" -name '.DS_Store' -print -quit)"

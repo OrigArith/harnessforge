@@ -17,8 +17,11 @@ ops-playbook/
 │   ├── plugin.json                        # [claude] Plugin identity and skill paths
 │   └── marketplace.json                   # [claude] Marketplace discovery metadata
 │
-├── .codex/                                # [codex]  Codex support directory
-│   └── INSTALL.md                         # [codex]  Clone + symlink install instructions
+├── .codex-plugin/                         # [codex]  Codex plugin directory
+│   └── plugin.json                        # [codex]  Codex manifest (name, version, description, skills)
+│
+├── .codex/                                # [codex]  Codex manual install (alternative)
+│   └── INSTALL.md                         # [codex]  Clone + symlink instructions
 │
 ├── AGENTS.md                              # [shared] Cross-platform instruction file
 ├── CLAUDE.md                              # [claude] @AGENTS.md import shell
@@ -87,18 +90,18 @@ Line count: 12 lines.
 
 | Category | Count | Percentage |
 |----------|-------|------------|
-| Shared files | 10 | ~77% |
-| Claude Code specific | 3 | ~23% |
-| Codex specific | 1 | ~8% |
-| **Total unique** | **13** | -- |
+| Shared files | 10 | ~71% |
+| Claude Code specific | 3 | ~21% |
+| Codex specific | 2 | ~14% |
+| **Total unique** | **14** | -- |
 
 Note: CLAUDE.md counts as Claude-specific (it imports shared AGENTS.md but is only read by Claude Code).
 
 ### Key Observations
 
 1. **No `adapters/` directory.** The repo root is the plugin root. All paths in plugin.json start with `./`.
-2. **Marketplace install works.** When `claude plugin install` copies this repo to cache, `./skills/` resolves correctly because skills are inside the copied directory.
-3. **Codex uses clone + symlink.** `.codex/INSTALL.md` tells users to clone and symlink `skills/` into `~/.agents/skills/`.
+2. **Marketplace install works.** When Claude Code or Codex copies this repo to cache, `./skills/` resolves correctly because skills are inside the copied directory.
+3. **Codex has both plugin manifest and manual install.** `.codex-plugin/plugin.json` is the official entry point. `.codex/INSTALL.md` provides clone + symlink as a manual alternative.
 4. **AGENTS.md is the single source of truth.** Claude Code imports it via CLAUDE.md. Codex reads it directly.
 
 ---

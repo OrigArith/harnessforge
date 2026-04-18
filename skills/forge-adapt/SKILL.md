@@ -1,11 +1,11 @@
 ---
 name: forge-adapt
-description: "Use this skill when adding Claude Code or Codex platform support to an agent ecosystem project, writing plugin.json manifests, setting up cross-platform directory structure, or reviewing platform compatibility. Covers three packaging patterns (root-level manifests, adapters directory, content triplication), the five-layer compatibility matrix, Claude Code plugin.json + marketplace.json specification, Codex clone-and-symlink install, and manifest field mapping between platforms. Trigger keywords: platform adapter, Claude Code plugin, Codex plugin, plugin.json, marketplace.json, cross-platform, manifest, compatibility, adapters, 平台适配, 跨平台兼容."
+description: "Use this skill when adding Claude Code or Codex platform support to an agent ecosystem project, writing plugin.json manifests, setting up cross-platform directory structure, or reviewing platform compatibility. Covers three packaging patterns (root-level manifests, adapters directory, content triplication), the five-layer compatibility matrix, Claude Code plugin.json + marketplace.json specification, Codex .codex-plugin/plugin.json specification, and manifest field mapping between platforms. Trigger keywords: platform adapter, Claude Code plugin, Codex plugin, plugin.json, marketplace.json, cross-platform, manifest, compatibility, adapters, 平台适配, 跨平台兼容."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.4.0"
+  version: "0.5.0"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -28,9 +28,11 @@ The repo root IS the plugin root. Manifests live at the top level alongside shar
 project/
 ├── .claude-plugin/
 │   ├── plugin.json          # Claude Code manifest
-│   └── marketplace.json     # Marketplace discovery metadata
+│   └── marketplace.json     # Claude Code marketplace discovery
+├── .codex-plugin/
+│   └── plugin.json          # Codex manifest
 ├── .codex/
-│   └── INSTALL.md           # Codex clone + symlink instructions
+│   └── INSTALL.md           # Codex manual install alternative
 ├── skills/                  # Shared content
 │   └── my-skill/
 │       └── SKILL.md
@@ -42,7 +44,7 @@ project/
 
 **Real-world examples**: superpowers, oh-my-claudecode, HarnessForge itself.
 
-**Key rule**: When a project is installed via marketplace (`claude plugin install`), it is copied to a cache directory. External paths (`../../`) break. Root-level manifests with `./` paths survive this copy.
+**Key rule**: Both Claude Code and Codex copy plugins to a cache directory on install (`~/.claude/plugins/cache/` and `~/.codex/plugins/cache/` respectively). External paths (`../../`) break after copy. Root-level manifests with `./` paths survive this.
 
 ### Pattern B: Adapters Directory
 
@@ -278,11 +280,30 @@ claude plugin validate ./adapters/claude/
 
 ## Adding Codex Support
 
-Codex does not have a marketplace. Distribution is via clone + symlink into the native skill discovery directory (`~/.agents/skills/`).
+Codex uses `.codex-plugin/plugin.json` as the official plugin manifest entry point. The Codex marketplace (public directory coming soon) installs plugins into `~/.codex/plugins/cache/`. For manual distribution, clone + symlink into the skill discovery directory (`~/.agents/skills/`) also works.
 
 ### For Pattern A (Root-Level)
 
-Create `.codex/INSTALL.md` with clone and symlink instructions:
+#### Step 1: Write .codex-plugin/plugin.json
+
+Create `.codex-plugin/plugin.json` at the repo root:
+
+```json
+{
+  "name": "{{PLUGIN_NAME}}",
+  "version": "{{VERSION}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "skills": "./skills/"
+}
+```
+
+Required fields: `name`, `version`, `description`. The `skills` field points Codex to the skill directory.
+
+See `references/codex-plugin-json-template.md` for the complete field reference.
+
+#### Step 2: Write .codex/INSTALL.md (manual install alternative)
+
+Until the public Codex marketplace opens, provide clone + symlink instructions:
 
 ```markdown
 # Installing {{PROJECT_NAME}} for Codex
@@ -316,6 +337,8 @@ rm ~/.agents/skills/{{PROJECT_NAME}}
 ```
 
 ### For Pattern B (Adapters Directory)
+
+For Pattern B, the adapter directory is the plugin root. Create `adapters/codex/.codex-plugin/plugin.json` with paths relative to the adapter root. Additionally, provide an install script for manual distribution:
 
 Create `adapters/codex/install.sh` that copies content and performs path variable substitution:
 

@@ -85,8 +85,11 @@ Use when the project packages domain knowledge, workflows, or checklists as reus
 │   ├── plugin.json                    #   Plugin identity + skill paths (./skills/)
 │   └── marketplace.json               #   Marketplace discovery metadata
 │
-├── .codex/                            # --- Codex Support ---
-│   └── INSTALL.md                     #   Clone + symlink install instructions
+├── .codex-plugin/                     # --- Codex Plugin ---
+│   └── plugin.json                    #   Codex manifest (name, version, description, skills)
+│
+├── .codex/                            # --- Codex Manual Install (alternative) ---
+│   └── INSTALL.md                     #   Clone + symlink instructions for non-marketplace install
 │
 ├── skills/                            # --- Shared Content Layer ---
 │   ├── {{SKILL_A}}/                   # Each skill gets its own subdirectory
@@ -118,7 +121,7 @@ Use when the project packages domain knowledge, workflows, or checklists as reus
 **Key constraints:**
 - No `src/` directory. The skill pack has no server-side code.
 - No `adapters/` directory. The repo root IS the plugin root. Plugin manifests use `"./skills/"` paths.
-- Root entry count: 9 items (well under the 15-entry ceiling).
+- Root entry count: 10 items (well under the 15-entry ceiling).
 - Each skill subdirectory is self-contained: SKILL.md + scripts + references + examples.
 - Marketplace install works because all content is inside the copied directory — no `../../` path escapes.
 

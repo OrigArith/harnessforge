@@ -8,6 +8,32 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-04-18
+
+### Breaking
+- forge-init execution steps (3/4/7/10) now branch by template type.
+  Template B uses root-level manifests; Template A/C uses adapters/.
+
+### Changed
+- Restored `.codex-plugin/plugin.json` as official Codex plugin entry point.
+  Previous version incorrectly removed it; OpenAI docs confirm it as the
+  required manifest location ("Every plugin has a manifest at
+  `.codex-plugin/plugin.json`").
+- forge-adapt: Codex section corrected to document `.codex-plugin/plugin.json`
+  as official entry, Codex marketplace system, and cache install path.
+  `.codex/INSTALL.md` retained as manual install alternative.
+- forge-init: Steps 3/4/7/10 now properly distinguish Template B (root-level
+  manifests) from Template A/C (adapters directory). Eliminates internal
+  contradiction where rules allowed root-level manifests but steps forced
+  adapters/.
+- forge-init Template B directory tree: added `.codex-plugin/`.
+- Pattern A/B directory trees in forge-adapt examples updated with `.codex-plugin/`.
+- CI: re-added `.codex-plugin/plugin.json` validation and cross-platform
+  version consistency check.
+
+### Added
+- `.codex-plugin/plugin.json` — Codex plugin manifest at repo root.
+
 ## [0.4.0] - 2026-04-18
 
 ### Breaking
@@ -76,7 +102,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ---
 
-[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/OrigArith/harnessforge/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/OrigArith/harnessforge/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/OrigArith/harnessforge/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/OrigArith/harnessforge/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/OrigArith/harnessforge/releases/tag/v0.2.0

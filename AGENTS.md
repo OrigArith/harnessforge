@@ -10,7 +10,8 @@ Tech stack: Markdown (SKILL.md) + Shell scripts. No build step required.
 
 - `skills/` — 5 skill directories, each with SKILL.md + references/ + optional examples/
 - `.claude-plugin/` — Claude Code plugin manifest + marketplace.json
-- `.codex/` — Codex clone + symlink install instructions
+- `.codex-plugin/` — Codex plugin manifest
+- `.codex/` — Codex manual install instructions (clone + symlink alternative)
 - `scripts/` — Install/uninstall helpers
 - `tests/smoke/` — Skill validation scripts
 - `config/` — Default configuration

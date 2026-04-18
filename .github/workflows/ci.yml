@@ -43,6 +43,22 @@ jobs:
             exit 1
           fi
 
+          # Validate Codex manifest
+          python3 -m json.tool .codex-plugin/plugin.json > /dev/null
+
+          # Verify Codex version matches Claude version
+          codex_version=$(grep '"version"' .codex-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$plugin_version" != "$codex_version" ]; then
+            echo "::error::Version mismatch: Claude=$plugin_version, Codex=$codex_version"
+            exit 1
+          fi
+
+          # Verify Codex manifest uses ./ paths
+          if grep -q '\.\./\.\.' .codex-plugin/plugin.json; then
+            echo "::error::Codex manifest must not use ../../ path traversal"
+            exit 1
+          fi
+
           # Verify .codex/INSTALL.md exists
           if [ ! -f .codex/INSTALL.md ]; then
             echo "::error::Missing .codex/INSTALL.md"
