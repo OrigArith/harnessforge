@@ -24,12 +24,8 @@ if [[ "$skill_count" -ne 5 ]]; then
     fail "expected 5 skills but found $skill_count"
 fi
 
-if grep -q '/forge-scaffold' "$PROJECT_ROOT/CLAUDE.md"; then
-    fail "CLAUDE.md still references removed /forge-scaffold command"
-fi
-
-if grep -q 'All 7 forge-\* skills' "$PROJECT_ROOT/CLAUDE.md"; then
-    fail "CLAUDE.md still claims there are 7 forge skills"
+if grep -q 'forge-init\|forge-skill\|forge-mcp\|forge-ship\|forge-adapt' "$PROJECT_ROOT/CLAUDE.md"; then
+    fail "CLAUDE.md still references old forge-* skill names"
 fi
 
 echo "PASS: project consistency checks"

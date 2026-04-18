@@ -40,9 +40,9 @@ The following are in-scope for HarnessForge:
 - Templates in `references/` that inject harmful code when expanded by agents
 - {{PLACEHOLDER}} patterns designed to trick agents into unsafe operations
 
-### Install Script Vulnerabilities
-- `install.sh` performing operations beyond symlink creation
-- Path traversal in symlink targets
+### Plugin Manifest Tampering
+- Malicious modifications to plugin.json that alter skill discovery paths
+- Path traversal in manifest `skills` field
 
 ### Supply Chain
 - Compromised dependencies (if any are added in future)
