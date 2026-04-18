@@ -1,13 +1,16 @@
 {
   "name": "harnessforge",
-  "version": "0.3.0",
   "description": "A skill pack that teaches coding agents to build production-grade skills, MCP servers, and plugins.",
-  "author": {
+  "owner": {
     "name": "OrigArith",
     "url": "https://github.com/OrigArith"
   },
-  "repository": "https://github.com/OrigArith/harnessforge",
-  "license": "MIT",
-  "keywords": ["harness", "agent", "skills", "mcp", "plugin", "best-practices"],
-  "skills": "./skills/"
+  "plugins": [
+    {
+      "name": "harnessforge",
+      "description": "5 scene-driven skills for agent harness engineering",
+      "version": "0.4.0",
+      "source": "./"
+    }
+  ]
 }

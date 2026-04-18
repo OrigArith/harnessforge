@@ -104,7 +104,7 @@ Everything about the manifest and packaging contract.
 
 | Dimension | Claude Code | Codex |
 |-----------|-------------|-------|
-| Manifest location | `.claude-plugin/plugin.json` | `.codex-plugin/plugin.json` |
+| Manifest location | `.claude-plugin/plugin.json` + `marketplace.json` | Clone + symlink (`.codex/INSTALL.md`) or `adapters/codex/install.sh` |
 | Plugin model | Directory content pack | Lightweight bundle |
 | Required manifest fields | `name` (manifest itself is optional for local use) | `name`, `version`, `description`, `skills` (all four required) |
 | Content layout convention | `skills/`, `agents/`, `hooks/`, `.mcp.json` | `skills/`, `.mcp.json`, `assets/` |

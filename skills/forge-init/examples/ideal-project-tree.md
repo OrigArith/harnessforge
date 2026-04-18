@@ -117,9 +117,8 @@ file-tools/                                # Root: 11 entries (under 15-entry ce
 │   │                                      #       "command": "node",
 │   │                                      #       "args": ["../../src/server.ts"] } } }
 │   └── codex/                             # Codex adapter
-│       ├── .codex-plugin/
-│       │   └── plugin.json                # Codex manifest: name, version, description,
-│       │                                  #   entryPoints, capabilities
+│       ├── install.sh                     # Clone + path substitution script
+│       ├── README.md                      # Codex-specific install instructions
 │       └── agents/
 │           └── openai.yaml                # Codex vendor extensions:
 │                                          #   model_config, tool_choice preferences
@@ -149,7 +148,7 @@ After scaffolding, verify these properties hold:
 - [ ] `README.md` line 10-14 contains working install + run commands.
 - [ ] `SECURITY.md` is at root (not in `docs/`).
 - [ ] `adapters/` contains only `claude/` and `codex/` (the two selected platforms).
-- [ ] No `.claude-plugin/`, `.codex-plugin/`, or any platform manifest exists in the project root.
+- [ ] Manifest placement matches project type: root-level for skill packs, `adapters/` for MCP server and full plugin projects.
 - [ ] `skills/file-refactor/SKILL.md` has valid YAML frontmatter with 6 required fields.
 - [ ] `tests/smoke/` has one smoke test per selected platform.
 - [ ] `example.env` (not `.env.example`) exists in `config/`.

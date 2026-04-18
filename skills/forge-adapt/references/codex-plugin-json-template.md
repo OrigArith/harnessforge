@@ -1,6 +1,7 @@
-# Codex .codex-plugin/plugin.json Template
+# Codex Plugin Manifest Template
 
-Place this file at `.codex-plugin/plugin.json` relative to the plugin root directory.
+Codex does not have a standardized marketplace like Claude Code. Distribution is via clone + symlink. This template is for projects using Pattern B (adapters directory) that need a Codex plugin manifest at `adapters/codex/.codex-plugin/plugin.json`. For Pattern A (root-level), use `.codex/INSTALL.md` instead.
+
 Replace all `{{PLACEHOLDER}}` markers with actual values before use.
 
 ## Minimal Manifest

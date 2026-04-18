@@ -5,7 +5,7 @@ license: MIT
 compatibility: "Requires Node.js >= 18 or Python >= 3.10 for MCP server development. MCP SDK (@modelcontextprotocol/sdk or mcp[cli]) recommended."
 metadata:
   author: harnessforge
-  version: "0.3.0"
+  version: "0.4.0"
   category: mcp-development
 allowed-tools: Bash Read Edit Write Glob Grep
 ---

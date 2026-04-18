@@ -40,8 +40,8 @@ Use when the project exposes tools or data to agents via the MCP protocol.
 │   │   ├── CLAUDE.md                  #   @AGENTS.md + Claude-specific rules
 │   │   └── plugin.json               #   Claude Code manifest (<30 lines)
 │   ├── codex/                         # Codex adapter
-│   │   ├── .codex-plugin/
-│   │   │   └── plugin.json            #   Codex manifest
+│   │   ├── install.sh                 #   Clone + path substitution script
+│   │   ├── README.md                  #   Codex install instructions
 │   │   └── agents/
 │   │       └── openai.yaml            #   Codex vendor extensions
 │   ├── opencode/                      # OpenCode adapter
@@ -71,7 +71,7 @@ Use when the project exposes tools or data to agents via the MCP protocol.
 
 ## Template B: Skill Pack
 
-Use when the project packages domain knowledge, workflows, or checklists as reusable agent skills with no external system interaction.
+Use when the project packages domain knowledge, workflows, or checklists as reusable agent skills with no external system interaction. The repo root IS the plugin root — manifests live at root level for marketplace compatibility.
 
 ```text
 {{PROJECT_NAME}}/
@@ -79,6 +79,14 @@ Use when the project packages domain knowledge, workflows, or checklists as reus
 ├── LICENSE                            # MIT recommended for skill packs
 ├── CONTRIBUTING.md                    # Agent-ecosystem contribution guide
 ├── AGENTS.md                          # Cross-platform shared instructions
+├── CLAUDE.md                          # @AGENTS.md import shell (Claude Code entry)
+│
+├── .claude-plugin/                    # --- Claude Code Plugin (root = plugin root) ---
+│   ├── plugin.json                    #   Plugin identity + skill paths (./skills/)
+│   └── marketplace.json               #   Marketplace discovery metadata
+│
+├── .codex/                            # --- Codex Support ---
+│   └── INSTALL.md                     #   Clone + symlink install instructions
 │
 ├── skills/                            # --- Shared Content Layer ---
 │   ├── {{SKILL_A}}/                   # Each skill gets its own subdirectory
@@ -98,17 +106,6 @@ Use when the project packages domain knowledge, workflows, or checklists as reus
 │       ├── scripts/
 │       └── references/
 │
-├── adapters/                          # --- Platform Adapter Layer (thin) ---
-│   ├── claude/
-│   │   └── CLAUDE.md                  #   @AGENTS.md + Claude-specific rules
-│   ├── codex/
-│   │   └── agents/
-│   │       └── openai.yaml            #   Codex vendor extensions
-│   ├── opencode/
-│   │   └── opencode.jsonc             #   OpenCode configuration
-│   └── openclaw/
-│       └── openclaw.plugin.json       #   OpenClaw manifest
-│
 ├── tests/
 │   └── skill-smoke/                   #   Skill invocation smoke tests
 │       └── test-trigger.md            #   Test trigger phrases and expected behavior
@@ -120,9 +117,10 @@ Use when the project packages domain knowledge, workflows, or checklists as reus
 
 **Key constraints:**
 - No `src/` directory. The skill pack has no server-side code.
-- Adapter layer is ultra-thin: only entry instruction files and vendor config.
-- Root entry count: 7 items (minimal footprint).
+- No `adapters/` directory. The repo root IS the plugin root. Plugin manifests use `"./skills/"` paths.
+- Root entry count: 9 items (well under the 15-entry ceiling).
 - Each skill subdirectory is self-contained: SKILL.md + scripts + references + examples.
+- Marketplace install works because all content is inside the copied directory — no `../../` path escapes.
 
 ---
 
@@ -165,8 +163,8 @@ Use when shipping a product-grade installable plugin with skills + MCP tools + l
 │   │       ├── on-tool-start.sh
 │   │       └── on-notification.sh
 │   ├── codex/
-│   │   ├── .codex-plugin/
-│   │   │   └── plugin.json
+│   │   ├── install.sh                 #   Clone + path substitution script
+│   │   ├── README.md                  #   Codex install instructions
 │   │   ├── agents/
 │   │   │   └── openai.yaml
 │   │   └── hooks/                     #   Codex hooks (experimental)

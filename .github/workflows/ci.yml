@@ -26,20 +26,26 @@ jobs:
         run: |
           # Validate JSON
           python3 -m json.tool .claude-plugin/plugin.json > /dev/null
-          python3 -m json.tool .codex-plugin/plugin.json > /dev/null
+          python3 -m json.tool .claude-plugin/marketplace.json > /dev/null
 
-          # Check versions match
-          claude_version=$(grep '"version"' .claude-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          codex_version=$(grep '"version"' .codex-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
-          if [ "$claude_version" != "$codex_version" ]; then
-            echo "::error::Version mismatch: Claude=$claude_version, Codex=$codex_version"
+          # Verify versions match between plugin.json and marketplace.json
+          plugin_version=$(grep '"version"' .claude-plugin/plugin.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          marketplace_version=$(grep '"version"' .claude-plugin/marketplace.json | head -1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+')
+          if [ "$plugin_version" != "$marketplace_version" ]; then
+            echo "::error::Version mismatch: plugin.json=$plugin_version, marketplace.json=$marketplace_version"
             exit 1
           fi
-          echo "Versions match: $claude_version"
+          echo "Versions match: $plugin_version"
 
           # Verify skills paths use ./ prefix (no ../../ escape)
-          if grep -q '\.\./\.\.' .claude-plugin/plugin.json .codex-plugin/plugin.json; then
-            echo "::error::Plugin manifests must not use ../../ path traversal"
+          if grep -q '\.\./\.\.' .claude-plugin/plugin.json; then
+            echo "::error::Plugin manifest must not use ../../ path traversal"
+            exit 1
+          fi
+
+          # Verify .codex/INSTALL.md exists
+          if [ ! -f .codex/INSTALL.md ]; then
+            echo "::error::Missing .codex/INSTALL.md"
             exit 1
           fi
 

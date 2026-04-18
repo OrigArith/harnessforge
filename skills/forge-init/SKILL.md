@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.3.0"
+  version: "0.4.0"
   category: project-setup
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -42,9 +42,11 @@ Count every file and directory in the project root (including hidden ones like `
 
 ### Rule 2: Content-host separation
 
-The `skills/` and `src/` directories form the shared content layer. The `adapters/` directory is the platform-specific host layer. These two layers must never cross-import each other. Validate separation with this test: deleting the entire `adapters/` directory must leave `skills/` and `src/` independently runnable and testable.
+The `skills/` and `src/` directories form the shared content layer. Platform-specific files form the host layer. These two layers must never cross-import each other. Validate separation with this test: deleting all platform-specific files must leave `skills/` and `src/` independently runnable and testable.
 
-Do NOT place `.claude-plugin/`, `.codex-plugin/`, `openclaw.plugin.json`, or any platform manifest in the project root. All platform-specific files go under `adapters/<platform>/`.
+Manifest placement depends on the project template:
+- **Template B (Skill Pack):** Place `.claude-plugin/` and `.codex/` at the project root. The repo IS the plugin root. Paths in manifests use `./skills/`.
+- **Template A (MCP Server) and Template C (Full Plugin):** Place manifests under `adapters/<platform>/`. The adapter directory is the plugin root. Paths in manifests use `../../skills/`.
 
 ### Rule 3: Three-layer configuration strategy
 
@@ -108,7 +110,7 @@ Execute these steps in order when scaffolding a new project.
 
 - [AP1] **Marketing-style "zero friction" hiding real deps.** If install needs API keys, paid accounts, or multi-tool chains, declare them before the install command. Do not write "one command" if reality requires five steps.
 - [AP2] **Bloated manifest.** If `plugin.json` exceeds 30 lines, extract UI metadata and brand assets to `assets/`. Manifest = declaration only.
-- [AP3] **Vendor files in root.** Never place `.claude-plugin/`, `.codex-plugin/`, or `openclaw.plugin.json` in the project root. Always use `adapters/`.
+- [AP3] **Vendor files misplaced.** For Template A/C (MCP servers, full plugins), place manifests under `adapters/<platform>/`, not at root. For Template B (skill packs), root-level manifests ARE correct — the repo is the plugin root.
 - [AP4] **Undeclared dependency chains.** List every external dependency (runtime, CLI tools, accounts, tokens) in a prerequisites tree in README. If the tree exceeds 3 levels or 5 external deps, reduce required deps and make the rest optional.
 - [AP5] **Demo-grade examples.** Every file in `examples/` must include error handling and timeout protection. Mark project maturity level in README: `experimental` / `beta` / `production-ready`.
 - [AP6] **MCP as security boundary.** MCP is an interop protocol, not a sandbox. State this in SECURITY.md. Default to minimum permissions (`allowed_hosts: []`).
@@ -183,7 +185,7 @@ When reviewing an existing project's structure instead of creating a new one, ru
 - [ ] `skills/` and `src/` contain no imports from `adapters/` (content-host separation)
 - [ ] `config/default.json` exists and is valid JSON
 - [ ] `README.md` contains install commands in its first 30 lines
-- [ ] No platform-specific files (`.claude-plugin/`, `.codex-plugin/`) exist outside `adapters/`
+- [ ] Manifest placement matches template: root-level for Template B, `adapters/` for Template A/C
 - [ ] `AGENTS.md` exists and follows the 7-section structure
 - [ ] `CLAUDE.md` exists (if targeting Claude Code) and uses the `@AGENTS.md` import pattern
 - [ ] Every rule in AGENTS.md passes the three-test self-check (unambiguous, constraint, verifiable)

@@ -27,11 +27,15 @@ When your agent activates a HarnessForge skill, it gains access to curated best 
 claude plugin install https://github.com/OrigArith/harnessforge
 ```
 
-### As a Codex plugin
+### As a Codex skill pack
 
 ```bash
-codex install https://github.com/OrigArith/harnessforge
+git clone https://github.com/OrigArith/harnessforge.git ~/.codex/harnessforge
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/harnessforge/skills ~/.agents/skills/harnessforge
 ```
+
+See [.codex/INSTALL.md](.codex/INSTALL.md) for full instructions.
 
 ### Or install via symlinks (alternative)
 
@@ -96,8 +100,8 @@ HarnessForge follows the **Progressive Disclosure** model:
 
 ```
 harnessforge/
-├── .claude-plugin/      Claude Code plugin manifest
-├── .codex-plugin/       Codex plugin manifest
+├── .claude-plugin/      Claude Code plugin manifest + marketplace.json
+├── .codex/              Codex clone + symlink install instructions
 ├── skills/              5 skill directories (core content)
 ├── scripts/             Install/uninstall helpers
 ├── tests/               Smoke tests + trigger eval scaffold

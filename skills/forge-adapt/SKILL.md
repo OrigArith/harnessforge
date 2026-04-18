@@ -1,11 +1,11 @@
 ---
 name: forge-adapt
-description: "Use this skill when adding Claude Code or Codex platform support to an agent ecosystem project, writing plugin.json manifests, setting up cross-platform directory structure, or reviewing platform compatibility. Covers the five-layer compatibility matrix, shared content + thin adapter shell strategy, Claude Code plugin.json specification, Codex .codex-plugin specification, and manifest field mapping between platforms. Trigger keywords: platform adapter, Claude Code plugin, Codex plugin, plugin.json, cross-platform, manifest, compatibility, adapters, 平台适配, 跨平台兼容."
+description: "Use this skill when adding Claude Code or Codex platform support to an agent ecosystem project, writing plugin.json manifests, setting up cross-platform directory structure, or reviewing platform compatibility. Covers three packaging patterns (root-level manifests, adapters directory, content triplication), the five-layer compatibility matrix, Claude Code plugin.json + marketplace.json specification, Codex clone-and-symlink install, and manifest field mapping between platforms. Trigger keywords: platform adapter, Claude Code plugin, Codex plugin, plugin.json, marketplace.json, cross-platform, manifest, compatibility, adapters, 平台适配, 跨平台兼容."
 license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.3.0"
+  version: "0.4.0"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -14,86 +14,128 @@ allowed-tools: Bash Read Edit Write Glob Grep
 
 What can be unified is content; what cannot be unified is the host extension ABI.
 Do not attempt to produce a single plugin package that works on every agent platform.
-Instead, apply the canonical strategy: one shared content source plus thin platform adapter shells.
+Instead, choose the packaging pattern that matches the project's complexity, then keep shared content maximized and platform-specific files minimized.
 
-The shared content source holds everything platform-agnostic: SKILL.md files, MCP Server source code, hook scripts, reference documents, and AGENTS.md.
-Each adapter shell is a minimal manifest file (typically under 30 lines of JSON) that points into the shared content and satisfies one platform's packaging contract.
+## Three Packaging Patterns
 
-When you add a platform adapter, you are not duplicating content.
-You are writing a declaration that tells one specific host where to find the capabilities your project already provides.
+The ecosystem uses three distinct patterns for cross-platform plugin distribution. Choose based on project complexity.
+
+### Pattern A: Root-Level Manifests
+
+The repo root IS the plugin root. Manifests live at the top level alongside shared content.
+
+```text
+project/
+├── .claude-plugin/
+│   ├── plugin.json          # Claude Code manifest
+│   └── marketplace.json     # Marketplace discovery metadata
+├── .codex/
+│   └── INSTALL.md           # Codex clone + symlink instructions
+├── skills/                  # Shared content
+│   └── my-skill/
+│       └── SKILL.md
+├── AGENTS.md
+└── README.md
+```
+
+**When to use**: The project IS the plugin. Pure content (skill packs, knowledge bases). No MCP server, no hooks, no complex per-platform logic. Paths in manifests use `"./skills/"`.
+
+**Real-world examples**: superpowers, oh-my-claudecode, HarnessForge itself.
+
+**Key rule**: When a project is installed via marketplace (`claude plugin install`), it is copied to a cache directory. External paths (`../../`) break. Root-level manifests with `./` paths survive this copy.
+
+### Pattern B: Adapters Directory
+
+Shared content lives in `skills/`, `src/`, `hooks/`. Platform-specific manifests and install scripts live under `adapters/<platform>/`.
+
+```text
+project/
+├── skills/                  # Shared content
+├── src/                     # MCP server (shared)
+├── hooks/                   # Hook logic scripts (shared)
+├── adapters/
+│   ├── claude/
+│   │   ├── .claude-plugin/
+│   │   │   └── plugin.json  # skills: "../../skills/"
+│   │   └── hooks/
+│   │       └── hooks.json   # Platform-specific hook config
+│   ├── codex/
+│   │   ├── install.sh       # Clone + path substitution
+│   │   └── README.md
+│   └── opencode/
+│       └── install.sh
+├── AGENTS.md
+└── README.md
+```
+
+**When to use**: The project has MCP servers, lifecycle hooks, per-platform install scripts, or needs path variable substitution (`${CLAUDE_PLUGIN_ROOT}` → `~/.codex/project/`). Typically, projects with both `skills/` and `src/`.
+
+**Real-world examples**: agentsys (19 plugins, per-platform install scripts with path substitution).
+
+**Key rule**: Each adapter directory is a plugin root. The `skills` path in manifests is relative to that adapter root, typically `"../../skills/"`. This pattern works for development and direct install but breaks on marketplace install (cache isolation strips external paths). Use this pattern only when marketplace install is not the primary distribution channel.
+
+### Pattern C: Content Triplication (discouraged)
+
+Full copies of skills in each platform's native discovery directory.
+
+```text
+project/
+├── .claude/skills/my-skill/SKILL.md
+├── .agents/skills/my-skill/SKILL.md
+├── .opencode/skills/my-skill/SKILL.md
+└── README.md
+```
+
+**When to use**: Only when platform-specific SKILL.md differences are substantial (rare). This pattern is maintenance-heavy — every content change must be replicated N times.
+
+**Real-world examples**: autoresearch (triplicated across 3 platform directories).
+
+**Recommendation**: Avoid this pattern for new projects. If you need minor per-platform tweaks, use Pattern A or B with platform-specific overrides, not full copies.
+
+### Decision Table
+
+| Question | If Yes → Pattern | If No → Next Question |
+|----------|------------------|-----------------------|
+| Is the project pure content (no MCP server, no hooks)? | **A: Root-Level** | ↓ |
+| Does it need per-platform install scripts or path substitution? | **B: Adapters** | ↓ |
+| Are SKILL.md files substantially different per platform? | **C: Triplication** | **B: Adapters** (default for complex projects) |
 
 ## Five-Layer Compatibility Matrix
 
 Before writing any adapter, assess which layers of your project can be shared and which require per-platform work.
-Use this matrix to set expectations and scope the adaptation effort.
 
 | Layer | Cross-Platform Compatibility | What Is Shared | What Is Platform-Specific | Key Differences |
 |-------|------------------------------|----------------|---------------------------|-----------------|
 | Instruction files | ~85% | `AGENTS.md` content body | Entry-point filename (`CLAUDE.md` vs `AGENTS.md`) | Claude Code uses `@AGENTS.md` import syntax; Codex reads `AGENTS.md` natively |
 | Skills | ~80-90% | `SKILL.md` frontmatter + instruction body | Vendor-specific frontmatter fields | Codex has `agents/openai.yaml` per skill; unknown frontmatter fields are safely ignored |
 | MCP | ~90% | MCP Server source code; `.mcp.json` as shared description | Client-side config format (JSON vs TOML) | Claude Code reads `.mcp.json` natively; Codex uses `config.toml` with `[mcp_servers]` blocks |
-| Plugins | <50% | Shared payload (`skills/`, `src/`, assets) | Manifest format and required fields | Claude Code = directory content pack; Codex = lightweight bundle; definitions are fundamentally different |
+| Plugins | <50% | Shared payload (`skills/`, `src/`, assets) | Manifest format and required fields | Claude Code = directory content pack with marketplace; Codex = clone + symlink; definitions are fundamentally different |
 | Hooks | <50% | Design intent (e.g., "block destructive commands") | Event names, handler types, config format | Claude Code has ~22 events + 4 handler types (stable); Codex hooks are experimental with limited events |
 
 Consult `references/compatibility-matrix.md` for the full per-layer analysis when you need deeper detail.
 
-## Shared Content vs Platform Shell
+## Adding Claude Code Support
 
-Organize the project so that platform-agnostic content lives in the root and shared directories, while platform-specific adapters live under `adapters/`.
+### For Pattern A (Root-Level)
 
-### Shared directories (platform-agnostic)
+Follow these steps when the repo root is the plugin root.
 
-| Directory / File | Content |
-|------------------|---------|
-| `skills/` | All SKILL.md files, their `scripts/`, `references/`, and assets |
-| `src/` | MCP Server implementation, business logic |
-| `.mcp.json` | MCP Server declarations (Claude Code reads natively; other platforms derive from it) |
-| `AGENTS.md` | Cross-platform instruction file (canonical source of truth) |
-| `hooks/` (scripts only) | Hook implementation scripts (`.sh`, `.py`) that contain the actual logic |
-| `tests/` | Platform-agnostic test cases |
-
-### Platform-specific directories
-
-| Directory | Content |
-|-----------|---------|
-| `adapters/claude/` | `.claude-plugin/plugin.json`, optional `CLAUDE.md` import shell |
-| `adapters/codex/` | `.codex-plugin/plugin.json`, optional `agents/openai.yaml` files |
-
-### Litmus test for placement
-
-Ask these questions about each file:
-
-1. Does it declare platform identity, version, or packaging metadata? Place it in `adapters/<platform>/`.
-2. Does it teach an agent how to perform a task? Place it in `skills/`.
-3. Does it connect to an external system via MCP? Place it in `src/` (implementation) and `.mcp.json` (declaration).
-4. Does it contain hook registration config (event-to-handler mapping)? Place it in `adapters/<platform>/`.
-5. Does it contain hook logic (the script that runs)? Place it in `hooks/` (shared).
-
-When in doubt, keep it shared. Only move a file to `adapters/` when a platform requires a specific format that no other platform can consume.
-
-See `examples/dual-platform-directory-tree.md` for a fully annotated reference layout.
-
-## Adding Claude Code Adapter
-
-Follow these steps in order to add Claude Code support to an existing project.
-
-### Step 1: Create the manifest directory
+#### Step 1: Create the manifest directory
 
 ```bash
-mkdir -p adapters/claude/.claude-plugin
+mkdir -p .claude-plugin
 ```
 
-### Step 2: Write plugin.json
+#### Step 2: Write plugin.json
 
-Create `adapters/claude/.claude-plugin/plugin.json` with at minimum these fields:
+Create `.claude-plugin/plugin.json`:
 
 ```json
 {
   "name": "{{PLUGIN_NAME}}",
   "version": "{{VERSION}}",
   "description": "{{ONE_LINE_DESCRIPTION}}",
-  "skills": "../../skills/",
-  "mcpServers": {}
+  "skills": "./skills/"
 }
 ```
 
@@ -102,30 +144,51 @@ Recommended fields: `version` (semver), `author`, `homepage`, `repository`, `lic
 
 Path rules:
 - All paths are relative to the plugin root (the directory containing `.claude-plugin/`).
-- The `skills` field replaces the default discovery path; it does not append. If you need both the default and a custom path, list both.
+- Paths must start with `./` — never use `../` or `../../`.
+- The `skills` field replaces the default discovery path; it does not append.
 - Use `${CLAUDE_PLUGIN_ROOT}` to reference the plugin install root in hook commands.
-- Never assume development directory structure survives installation.
 
 See `references/claude-code-plugin-json-template.md` for the complete field reference with placeholders.
 
-### Step 3: Write the CLAUDE.md import shell
+#### Step 3: Write marketplace.json
 
-If the project has an `AGENTS.md`, create `adapters/claude/CLAUDE.md`:
+Create `.claude-plugin/marketplace.json` for marketplace discovery:
+
+```json
+{
+  "name": "{{PLUGIN_NAME}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "owner": {
+    "name": "{{AUTHOR_OR_ORG}}",
+    "url": "{{AUTHOR_URL}}"
+  },
+  "plugins": [
+    {
+      "name": "{{PLUGIN_NAME}}",
+      "description": "{{SHORT_DESCRIPTION}}",
+      "version": "{{VERSION}}",
+      "source": "./"
+    }
+  ]
+}
+```
+
+The `plugins` array allows a single repo to host multiple plugins. For most projects, one entry with `"source": "./"` is sufficient.
+
+#### Step 4: Write the CLAUDE.md import shell
+
+If the project has an `AGENTS.md`, create `CLAUDE.md` at the repo root:
 
 ```markdown
-@../../AGENTS.md
+@AGENTS.md
 
+## Claude Code Specific
 <!-- Claude Code specific additions below -->
 ```
 
-This pulls in the shared instruction content and allows Claude-only additions (e.g., `allowed-tools` declarations, Claude-specific workflow notes).
+#### Step 5: Configure MCP mapping (if applicable)
 
-### Step 4: Configure MCP mapping
-
-If the project has a `.mcp.json`, reference it in `plugin.json` under `mcpServers`.
-Claude Code reads `.mcp.json` natively, so if the adapter directory will be installed as the plugin root, copy or symlink the shared `.mcp.json` declaration.
-
-For MCP Servers launched via npm:
+If the project has MCP Servers, declare them in `plugin.json`:
 
 ```json
 {
@@ -138,9 +201,54 @@ For MCP Servers launched via npm:
 }
 ```
 
-### Step 5: Add hooks (optional)
+#### Step 6: Validate
 
-If the project needs lifecycle hooks, create `adapters/claude/hooks/hooks.json`:
+```bash
+claude plugin validate .
+```
+
+### For Pattern B (Adapters Directory)
+
+Follow these steps when manifests live under `adapters/claude/`.
+
+#### Step 1: Create the adapter directory
+
+```bash
+mkdir -p adapters/claude/.claude-plugin
+```
+
+#### Step 2: Write plugin.json
+
+Create `adapters/claude/.claude-plugin/plugin.json`:
+
+```json
+{
+  "name": "{{PLUGIN_NAME}}",
+  "version": "{{VERSION}}",
+  "description": "{{ONE_LINE_DESCRIPTION}}",
+  "skills": "../../skills/",
+  "mcpServers": {}
+}
+```
+
+Path rules for Pattern B:
+- Paths are relative to `adapters/claude/` (the adapter root, which IS the plugin root).
+- `"../../skills/"` traverses up to the repo root's `skills/` directory.
+- This works for direct install (`claude plugin install ./adapters/claude/`) but breaks on marketplace install (cache isolation removes external paths).
+
+#### Step 3: Write the CLAUDE.md import shell
+
+Create `adapters/claude/CLAUDE.md`:
+
+```markdown
+@../../AGENTS.md
+
+<!-- Claude Code specific additions below -->
+```
+
+#### Step 4: Add hooks (optional)
+
+Create `adapters/claude/hooks/hooks.json`:
 
 ```json
 {
@@ -160,44 +268,76 @@ If the project needs lifecycle hooks, create `adapters/claude/hooks/hooks.json`:
 }
 ```
 
-Reference the shared hook scripts from `hooks/` using relative or `${CLAUDE_PLUGIN_ROOT}` paths.
+Reference the shared hook scripts from `hooks/` using `${CLAUDE_PLUGIN_ROOT}` paths.
 
-### Step 6: Validate
-
-Run `claude plugin validate .` from the adapter directory to verify structure before publishing.
-
-## Adding Codex Adapter
-
-Follow these steps in order to add Codex support to an existing project.
-
-### Step 1: Create the manifest directory
+#### Step 5: Validate
 
 ```bash
-mkdir -p adapters/codex/.codex-plugin
+claude plugin validate ./adapters/claude/
 ```
 
-### Step 2: Write plugin.json
+## Adding Codex Support
 
-Create `adapters/codex/.codex-plugin/plugin.json` with the four mandatory fields:
+Codex does not have a marketplace. Distribution is via clone + symlink into the native skill discovery directory (`~/.agents/skills/`).
 
-```json
-{
-  "name": "{{PLUGIN_NAME}}",
-  "version": "{{VERSION}}",
-  "description": "{{ONE_LINE_DESCRIPTION}}",
-  "skills": "../../skills/"
-}
+### For Pattern A (Root-Level)
+
+Create `.codex/INSTALL.md` with clone and symlink instructions:
+
+```markdown
+# Installing {{PROJECT_NAME}} for Codex
+
+## Installation
+
+1. Clone the repository:
+   ```bash
+   git clone {{REPO_URL}} ~/.codex/{{PROJECT_NAME}}
+   ```
+
+2. Create the skills symlink:
+   ```bash
+   mkdir -p ~/.agents/skills
+   ln -s ~/.codex/{{PROJECT_NAME}}/skills ~/.agents/skills/{{PROJECT_NAME}}
+   ```
+
+3. Restart Codex to discover the skills.
+
+## Updating
+
+```bash
+cd ~/.codex/{{PROJECT_NAME}} && git pull
 ```
 
-All four fields (`name`, `version`, `description`, `skills`) are required for Codex. This is stricter than Claude Code.
+## Uninstalling
 
-Recommended additional fields: `author` (object with `name`, `url`), `homepage`, `repository`, `license`, `keywords`, `interface` block.
+```bash
+rm ~/.agents/skills/{{PROJECT_NAME}}
+```
+```
 
-See `references/codex-plugin-json-template.md` for the complete field reference with placeholders.
+### For Pattern B (Adapters Directory)
 
-### Step 3: Write agents/openai.yaml (optional, per skill)
+Create `adapters/codex/install.sh` that copies content and performs path variable substitution:
 
-If a skill needs Codex-specific display metadata or tool dependency declarations, create `skills/<skill-name>/agents/openai.yaml`:
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+INSTALL_DIR="${HOME}/.codex/{{PROJECT_NAME}}"
+mkdir -p "$INSTALL_DIR" ~/.agents/skills
+
+# Copy shared content
+cp -r ../../skills/ "$INSTALL_DIR/skills/"
+cp -r ../../hooks/ "$INSTALL_DIR/hooks/" 2>/dev/null || true
+
+# Create skill discovery symlink
+ln -sf "$INSTALL_DIR/skills" ~/.agents/skills/{{PROJECT_NAME}}
+
+echo "Installed to $INSTALL_DIR"
+```
+
+### Codex-Specific Metadata (optional, per skill)
+
+If a skill needs Codex-specific display metadata, create `skills/<skill-name>/agents/openai.yaml`:
 
 ```yaml
 interface:
@@ -215,15 +355,11 @@ dependencies:
       description: "{{TOOL_DESCRIPTION}}"
 ```
 
-This file is a Codex vendor extension. It does not belong in the Agent Skills open standard.
-Place it alongside the SKILL.md it describes. Other platforms will ignore it.
+This file is a Codex vendor extension. Place it alongside the SKILL.md it describes. Other platforms will ignore it.
 
-### Step 4: Configure MCP mapping
+### Codex MCP Configuration
 
-Codex reads MCP configuration from `config.toml`, not `.mcp.json`.
-If the project has a shared `.mcp.json`, map each server to the TOML format in project documentation or provide a generation script.
-
-TOML format for one MCP Server:
+Codex reads MCP configuration from `config.toml`, not `.mcp.json`:
 
 ```toml
 [mcp_servers.{{SERVER_NAME}}]
@@ -233,30 +369,6 @@ enabled = true
 ```
 
 Alternatively, declare MCP Servers inside the plugin manifest under `mcpServers` (same JSON format as Claude Code). Codex plugin.json supports this.
-
-### Step 5: Add hooks (optional, experimental)
-
-Codex hooks require a feature flag:
-
-```toml
-[features]
-codex_hooks = true
-```
-
-Create `adapters/codex/.codex/hooks.json` with the same general structure as Claude Code hooks, but be aware:
-- Codex hooks are experimental and actively changing.
-- Event coverage is limited compared to Claude Code.
-- Hooks do not support Windows.
-
-Prefer implementing critical logic in Skills or MCP rather than Codex hooks.
-
-### Step 6: Validate
-
-Use the Codex built-in plugin creator (`$plugin-creator`) to verify the manifest skeleton is correct. Test by installing the plugin locally:
-
-```bash
-codex install ./adapters/codex/
-```
 
 ## Manifest Field Mapping
 
@@ -268,21 +380,23 @@ Key equivalences: `name`, `version`, `description`, `license`, `keywords`, `skil
 
 Follow these rules whenever you create or modify platform adapters.
 
-1. **Manifests must stay under 30 lines.** If a manifest exceeds 30 lines, you are putting content in the wrong place. Move logic to skills, scripts, or MCP Servers.
+1. **Choose the pattern that matches project complexity.** Use Pattern A for pure content plugins. Use Pattern B for projects with MCP servers, hooks, or per-platform install scripts. Never use Pattern C unless platform-specific SKILL.md differences are substantial.
 
-2. **Shared payload must constitute 70-80% of the project.** Measure by file count. If platform-specific files outnumber shared files, refactor to extract shared content.
+2. **Manifests must stay under 30 lines.** If a manifest exceeds 30 lines, you are putting content in the wrong place. Move logic to skills, scripts, or MCP Servers.
 
-3. **Version numbers must match across platforms.** When `adapters/claude/.claude-plugin/plugin.json` says `"version": "1.2.0"`, `adapters/codex/.codex-plugin/plugin.json` must say the same. Automate this with a script or CI check.
+3. **Shared payload must constitute 70-80% of the project.** Measure by file count. If platform-specific files outnumber shared files, refactor to extract shared content.
 
-4. **Skill paths must resolve correctly from each adapter root.** Test path resolution by running `ls` from the adapter directory following the relative path declared in the manifest. If `../../skills/` from `adapters/claude/` does not reach `skills/`, the path is wrong.
+4. **Version numbers must match across platforms.** When `.claude-plugin/plugin.json` says `"version": "1.2.0"`, the marketplace.json and any Codex metadata must agree. Automate this with a script or CI check.
 
-5. **Never hardcode environment-specific values in manifests.** Use `${CLAUDE_PLUGIN_ROOT}` for Claude Code. Use environment variables for Codex. Keep credentials out of committed files.
+5. **Skill paths must resolve correctly from each plugin root.** For Pattern A: `ls ./skills/` from repo root. For Pattern B: `ls ../../skills/` from adapter directory. If the path does not reach `skills/`, it is wrong.
 
-6. **Test each adapter independently.** Install the Claude Code adapter using `claude plugin validate`. Install the Codex adapter using `codex install`. Verify that skills are discovered and MCP Servers start.
+6. **Never hardcode environment-specific values in manifests.** Use `${CLAUDE_PLUGIN_ROOT}` for Claude Code. Use environment variables for Codex. Keep credentials out of committed files.
 
-7. **Keep AGENTS.md as the single source of truth for instructions.** Claude Code imports it via `CLAUDE.md` with `@AGENTS.md`. Codex reads it directly. Do not maintain two divergent instruction files.
+7. **Test each adapter independently.** Install the Claude Code adapter using `claude plugin validate`. Install the Codex adapter by following the clone + symlink instructions. Verify that skills are discovered.
 
-8. **Do not put hook registration in shared directories.** Hook event names and config formats differ between platforms. Keep hook config in `adapters/<platform>/`. Keep hook logic scripts in `hooks/` (shared).
+8. **Keep AGENTS.md as the single source of truth for instructions.** Claude Code imports it via `CLAUDE.md` with `@AGENTS.md`. Codex reads it directly. Do not maintain two divergent instruction files.
+
+9. **Do not put hook registration in shared directories.** Hook event names and config formats differ between platforms. Keep hook config in platform-specific directories. Keep hook logic scripts shared.
 
 ## References
 
@@ -291,4 +405,4 @@ Load these files on demand when you need deeper detail. Do not load all of them 
 - `references/compatibility-matrix.md` -- Full five-layer compatibility analysis with per-layer detail on what is shared, what is platform-specific, and the main differences.
 - `references/claude-code-plugin-json-template.md` -- Complete Claude Code plugin.json template with all fields, comments, and placeholder markers.
 - `references/codex-plugin-json-template.md` -- Complete Codex plugin.json template with all fields, comments, and placeholder markers.
-- `examples/dual-platform-directory-tree.md` -- Annotated directory tree showing a project with both Claude Code and Codex adapters, with shared vs platform-specific files clearly marked.
+- `examples/dual-platform-directory-tree.md` -- Annotated directory trees showing both Pattern A (root-level, skill pack) and Pattern B (adapters directory, full plugin) with shared vs platform-specific files clearly marked.
