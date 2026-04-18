@@ -8,6 +8,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/). Versioning follo
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-04-19
+
+### Changed
+- README: Codex install rewritten from clone+symlink to official local plugin
+  flow (clone to `~/.codex/plugins/`, register in `marketplace.json`).
+- `.codex/INSTALL.md`: Full rewrite covering personal and repo-scoped install
+  via `marketplace.json`, matching Codex official plugin documentation.
+- forge:adapt: Codex intro updated to describe marketplace.json discovery
+  mechanism. Pattern A Step 2 rewritten from symlink instructions to local
+  marketplace registration. Pattern B install.sh rewritten to copy into
+  `~/.codex/plugins/` and generate self-contained manifest.
+- README: Fixed duplicate `.codex/` line in project structure diagram.
+
 ## [0.7.1] - 2026-04-19
 
 ### Fixed

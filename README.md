@@ -33,15 +33,33 @@ claude plugin install forge@harnessforge
 
 ### Codex
 
-Codex plugin marketplace is coming soon. For now, install via clone + symlink:
+Public Plugin Directory listing is coming soon. For now, install as a local plugin:
 
 ```bash
-git clone https://github.com/OrigArith/harnessforge.git ~/.codex/harnessforge
-mkdir -p ~/.agents/skills
-ln -s ~/.codex/harnessforge/skills ~/.agents/skills/harnessforge
+# Step 1: Clone into the Codex plugins directory
+git clone https://github.com/OrigArith/harnessforge.git ~/.codex/plugins/harnessforge
+
+# Step 2: Register in your personal marketplace
+mkdir -p ~/.agents/plugins
+cat > ~/.agents/plugins/marketplace.json << 'EOF'
+{
+  "name": "local-plugins",
+  "interface": { "displayName": "Local Plugins" },
+  "plugins": [
+    {
+      "name": "forge",
+      "source": { "source": "local", "path": "./../../.codex/plugins/harnessforge" },
+      "policy": { "installation": "AVAILABLE", "authentication": "NONE" },
+      "category": "Developer Tools"
+    }
+  ]
+}
+EOF
+
+# Step 3: Restart Codex to discover the plugin
 ```
 
-See [.codex/INSTALL.md](.codex/INSTALL.md) for full instructions.
+See [.codex/INSTALL.md](.codex/INSTALL.md) for full instructions including repo-scoped install.
 
 ### Which skill do I need?
 
@@ -97,9 +115,8 @@ HarnessForge follows the **Progressive Disclosure** model:
 harnessforge/
 ├── .claude-plugin/      Claude Code plugin manifest + marketplace.json
 ├── .codex-plugin/       Codex plugin manifest
-├── .codex/              Codex manual install instructions (clone + symlink)
+├── .codex/              Codex local install instructions
 ├── skills/              5 skill directories (core content)
-├── .codex/              Codex manual install instructions
 ├── tests/               Smoke tests + trigger eval scaffold
 ├── config/              Default configuration
 ├── AGENTS.md            Cross-platform agent directives

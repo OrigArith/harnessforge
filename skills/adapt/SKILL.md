@@ -5,7 +5,7 @@ license: MIT
 compatibility: "No runtime dependencies. Works with any coding agent that supports SKILL.md."
 metadata:
   author: harnessforge
-  version: "0.7.1"
+  version: "0.7.2"
   category: platform-adaptation
 allowed-tools: Bash Read Edit Write Glob Grep
 ---
@@ -280,7 +280,7 @@ claude plugin validate ./adapters/claude/
 
 ## Adding Codex Support
 
-Codex uses `.codex-plugin/plugin.json` as the official plugin manifest entry point. The Codex marketplace (public directory coming soon) installs plugins into `~/.codex/plugins/cache/`. For manual distribution, clone + symlink into the skill discovery directory (`~/.agents/skills/`) also works.
+Codex uses `.codex-plugin/plugin.json` as the official plugin manifest entry point. Codex discovers plugins through `marketplace.json` files at two scopes: personal (`~/.agents/plugins/marketplace.json`) and repo-scoped (`$REPO_ROOT/.agents/plugins/marketplace.json`). Installed plugins are cached at `~/.codex/plugins/cache/`. The public Plugin Directory (self-serve publishing) is coming soon.
 
 ### For Pattern A (Root-Level)
 
@@ -301,38 +301,49 @@ Required fields: `name`, `version`, `description`. The `skills` field points Cod
 
 See `references/codex-plugin-json-template.md` for the complete field reference.
 
-#### Step 2: Write .codex/INSTALL.md (manual install alternative)
+#### Step 2: Write .codex/INSTALL.md (local install instructions)
 
-Provide clone + symlink instructions as a manual install alternative alongside `.codex-plugin/plugin.json`:
+Provide local plugin install instructions alongside `.codex-plugin/plugin.json`. Until the public Plugin Directory supports self-serve publishing, users install via local marketplace registration:
 
 ```markdown
 # Installing {{PROJECT_NAME}} for Codex
 
-## Installation
+## Personal Install (available across all repos)
 
-1. Clone the repository:
+1. Clone into the Codex plugins directory:
    ```bash
-   git clone {{REPO_URL}} ~/.codex/{{PROJECT_NAME}}
+   git clone {{REPO_URL}} ~/.codex/plugins/{{PROJECT_NAME}}
    ```
 
-2. Create the skills symlink:
-   ```bash
-   mkdir -p ~/.agents/skills
-   ln -s ~/.codex/{{PROJECT_NAME}}/skills ~/.agents/skills/{{PROJECT_NAME}}
+2. Register in your personal marketplace (`~/.agents/plugins/marketplace.json`):
+   ```json
+   {
+     "name": "local-plugins",
+     "interface": { "displayName": "Local Plugins" },
+     "plugins": [
+       {
+         "name": "{{PLUGIN_NAME}}",
+         "source": { "source": "local", "path": "./../../.codex/plugins/{{PROJECT_NAME}}" },
+         "policy": { "installation": "AVAILABLE", "authentication": "NONE" },
+         "category": "{{CATEGORY}}"
+       }
+     ]
+   }
    ```
 
-3. Restart Codex to discover the skills.
+3. Restart Codex. Open Plugin Directory (`/plugins`) and install.
 
 ## Updating
 
 ```bash
-cd ~/.codex/{{PROJECT_NAME}} && git pull
+cd ~/.codex/plugins/{{PROJECT_NAME}} && git pull
 ```
 
 ## Uninstalling
 
+Remove the entry from marketplace.json, then:
 ```bash
-rm ~/.agents/skills/{{PROJECT_NAME}}
+rm -rf ~/.codex/plugins/{{PROJECT_NAME}}
 ```
 ```
 
@@ -355,24 +366,35 @@ For Pattern B, the adapter directory is the plugin root. The primary entry point
 
 Note: `../../skills/` paths work for direct install but will NOT survive marketplace cache isolation. Document this limitation in README and provide the install script below as an alternative.
 
-#### Step 2: Create `adapters/codex/install.sh` (manual install alternative)
+#### Step 2: Create `adapters/codex/install.sh` (local install script)
 
-Create `adapters/codex/install.sh` that copies content and performs path variable substitution:
+Create `adapters/codex/install.sh` that copies content into the Codex plugins directory and registers a local marketplace entry:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
-INSTALL_DIR="${HOME}/.codex/{{PROJECT_NAME}}"
-mkdir -p "$INSTALL_DIR" ~/.agents/skills
+PLUGIN_NAME="{{PLUGIN_NAME}}"
+INSTALL_DIR="${HOME}/.codex/plugins/${PLUGIN_NAME}"
+MARKETPLACE="${HOME}/.agents/plugins/marketplace.json"
 
-# Copy shared content
+# Copy plugin content (flatten to avoid broken ../../ paths)
+mkdir -p "$INSTALL_DIR/skills" "$INSTALL_DIR/.codex-plugin"
 cp -r ../../skills/ "$INSTALL_DIR/skills/"
 cp -r ../../hooks/ "$INSTALL_DIR/hooks/" 2>/dev/null || true
 
-# Create skill discovery symlink
-ln -sf "$INSTALL_DIR/skills" ~/.agents/skills/{{PROJECT_NAME}}
+# Write a self-contained manifest (skills path is now local)
+cat > "$INSTALL_DIR/.codex-plugin/plugin.json" << EOF
+{
+  "name": "${PLUGIN_NAME}",
+  "version": "{{VERSION}}",
+  "description": "{{DESCRIPTION}}",
+  "skills": "./skills/"
+}
+EOF
 
-echo "Installed to $INSTALL_DIR"
+# Register in personal marketplace
+mkdir -p "$(dirname "$MARKETPLACE")"
+echo "Installed to $INSTALL_DIR — register in $MARKETPLACE and restart Codex."
 ```
 
 ### Codex-Specific Metadata (optional, per skill)
