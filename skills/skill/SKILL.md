@@ -261,6 +261,19 @@ Claude Code adds three categories of extensions to SKILL.md frontmatter:
 
 **Claude Code description budget:** `description` + `when_to_use` max 1,536 characters combined.
 
+**Claude Code `$ARGUMENTS` replacement:**
+
+When a user invokes a skill with arguments (e.g., `/my-skill some input text`), Claude Code replaces every occurrence of `$ARGUMENTS` in the SKILL.md body with the provided text. Use this to build skills that accept direct input:
+
+```markdown
+## Workflow
+
+1. Analyze the following user request: $ARGUMENTS
+2. ...
+```
+
+If `argument-hint` is set in frontmatter, it appears as placeholder text in the slash-command autocomplete, guiding the user on what to type.
+
 **Claude Code discovery paths:**
 
 ```
