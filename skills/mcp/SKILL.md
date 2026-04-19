@@ -302,10 +302,23 @@ Run conformance tests on every PR to catch description changes, schema regressio
 
 ---
 
+## Advanced Capabilities
+
+MCP protocol version 2025-11-25 introduces three capabilities that extend beyond basic tool execution. When implementing any of these, read `references/advanced-capabilities.md` for capability declarations, request flows, implementation patterns, and security considerations.
+
+- **Sampling**: Server requests the client to perform LLM inference. Use when the server needs reasoning but has no direct model access.
+- **Elicitation**: Server requests input from the user through the client's UI. Use when a value can only come from the human (API key, preference, confirmation).
+- **Tasks**: Async long-running operations with progress tracking and cancellation. Use when tool execution takes more than a few seconds.
+
+All three capabilities require explicit declaration and client support negotiation during `initialize`. Always implement a synchronous fallback for clients that do not support these features.
+
+---
+
 ## References
 
 Load these references as needed for detailed templates and examples:
 
 - **Tool description checklist** (14-point quality gate): `references/tool-description-checklist.md`
 - **`.mcp.json` configuration template**: `references/mcp-json-template.md`
+- **Advanced capabilities** (Sampling, Elicitation, Tasks): `references/advanced-capabilities.md`
 - **Tool design patterns and anti-patterns**: `examples/tool-design-patterns.md`
