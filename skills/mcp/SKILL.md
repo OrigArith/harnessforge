@@ -222,7 +222,7 @@ Follow these rules on every MCP server project. They are non-negotiable.
 
 4. **Use `.mcp.json` as the shared configuration source.** Place it in the project root. It is the closest thing to a cross-platform standard for MCP server configuration. Generate platform-specific configs from it.
 
-5. **Keep tool count per server under 20.** When you exceed 20 tools, agents lose selection accuracy. Split into multiple servers or use namespace prefixes and deferred loading.
+5. **Keep tool count per server under 20 (prefer 10-15).** Tool definitions exceeding 10K tokens or total MCP context exceeding 55K tokens cause measurable agent selection accuracy degradation. When you exceed 20 tools, split into multiple servers or use namespace prefixes and deferred loading.
 
 6. **Never log tokens or credentials in plaintext.** Not in stdout, stderr, or server logs.
 
