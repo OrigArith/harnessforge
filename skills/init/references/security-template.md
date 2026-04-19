@@ -1,6 +1,8 @@
-# SECURITY.md Template
+# SECURITY.md Template (Scaffold)
 
-Use this template when generating the project's SECURITY.md. Replace all `{{PLACEHOLDER}}` markers. This template addresses agent-ecosystem-specific threat categories that standard SECURITY templates do not cover.
+Use this template when generating the project's initial SECURITY.md at project creation time. Replace all `{{PLACEHOLDER}}` markers. This template addresses agent-ecosystem-specific threat categories that standard SECURITY templates do not cover.
+
+> **Upgrade path:** Before your first release, upgrade to the full SECURITY.md template in `forge:ship` (`references/security-md-template.md`), which adds severity classification, CVE policy, response SLA timelines, interim mitigation guidance, and coordinated disclosure process.
 
 ---
 
