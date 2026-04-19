@@ -50,7 +50,7 @@ Repository layout: see "Directory Layout" below.
 ## Security Constraints
 
 - Do not hardcode secrets, tokens, or passwords in any source file.
-- Declare environment variables in `.env.example`. Never commit actual `.env` files.
+- Declare environment variables in `config/example.env`. Never commit actual `.env` files.
 - Never concatenate user input into SQL strings. Use parameterized queries only.
 - Do not modify files under `.github/workflows/` unless the task explicitly requires it.
 - {{ADDITIONAL_SECURITY_CONSTRAINT}}
