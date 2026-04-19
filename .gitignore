@@ -24,3 +24,6 @@ AGENTS.override.md
 # Build output
 dist/
 build/
+
+# Agent working documents (not tracked)
+agent-docs/
