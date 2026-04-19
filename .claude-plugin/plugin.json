@@ -1,6 +1,6 @@
 {
   "name": "forge",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "A skill pack that teaches coding agents to build production-grade skills, MCP servers, and plugins.",
   "author": {
     "name": "OrigArith",
