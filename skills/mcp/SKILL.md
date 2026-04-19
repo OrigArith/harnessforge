@@ -106,6 +106,10 @@ Every tool must define `inputSchema` as a JSON Schema object with `type: "object
 - Do not encode business-logic validation in the schema. Runtime validation failures belong in tool execution errors, not schema constraints.
 - Do not over-constrain with `pattern` regexes unless the format is truly fixed (e.g., ISO dates, UUIDs).
 
+### Idempotency
+
+For write operations (create, update, delete, send), accept an optional `idempotency_key` string parameter. When the same key is received twice, return the cached result instead of executing again. This prevents duplicate side effects when agents retry failed calls — a common pattern since agents automatically retry on transient errors.
+
 ### Output schema
 
 Define `outputSchema` alongside `inputSchema` (Required — see Rule 10). This lets clients parse structured results without relying on free-text extraction.
