@@ -102,7 +102,11 @@ Execute these steps in order when scaffolding a new project.
 
 7. **Generate platform manifests.** For Template A/C: create the minimum viable manifest inside `adapters/<platform>/`. For Template B: create manifests at the project root (`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`). Keep all manifests under 30 lines. Do not embed UI metadata, brand colors, or default prompts in manifests.
 
-8. **Generate CI workflows.** Create `.github/workflows/ci.yml` with lint + type-check + unit-test stages. For Template A and C, also create `release.yml` and `security.yml`. Add a platform smoke test matrix that covers each selected adapter.
+8. **Generate CI workflows.** Follow the Four-Gate CI model (see `forge:ship` for the full specification). Create these workflow files:
+   - `ci.yml` — Gate 1: metadata lint (manifest schema validation, SKILL.md frontmatter, description change detection). Gate 2: unit tests + contract tests (MCP Inspector for Template A/C). Gate 3: cross-platform smoke test matrix for each selected adapter.
+   - `security.yml` — Gate 4: `npm audit` / `pip audit`, CodeQL static analysis, secret scanning.
+   - `release.yml` — (Template A/C) release automation with version bump and CHANGELOG generation.
+   All GitHub Actions references must use SHA-pinned commits, not floating tags (e.g., `actions/checkout@<sha> # v4.3.1`, not `actions/checkout@v4`).
 
 9. **Count root entries.** Run `ls -A <project-root> | wc -l` and verify the count is 15 or fewer. If it exceeds 15, consolidate files into subdirectories until compliant.
 
