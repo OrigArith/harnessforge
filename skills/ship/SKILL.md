@@ -317,3 +317,5 @@ When creating or updating CONTRIBUTING.md, read `references/contributing-templat
 - `references/security-md-template.md` -- SECURITY.md template with agent-ecosystem threat categories.
 - `references/supply-chain-checklist.md` -- Supply chain security checklist with commands for SBOM, lock files, Trusted Publishing, SHA pinning.
 - `references/license-selection-guide.md` -- MIT vs Apache 2.0 comparison for agent ecosystem projects.
+- `references/data-classification-guide.md` -- Four-level data classification (L1 credentials through L4 low-risk) with TTL, handling requirements, and redaction checklist.
+- `references/red-team-matrix.md` -- 5 attack vectors × 4 impact dimensions = 20 red team test scenarios with execution guide.
