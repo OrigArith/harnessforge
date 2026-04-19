@@ -486,4 +486,5 @@ Load these files on demand when you need deeper detail. Do not load all of them 
 - `references/compatibility-matrix.md` -- Full five-layer compatibility analysis with per-layer detail on what is shared, what is platform-specific, and the main differences.
 - `references/claude-code-plugin-json-template.md` -- Complete Claude Code plugin.json template with all fields, comments, and placeholder markers.
 - `references/codex-plugin-json-template.md` -- Complete Codex plugin.json template with all fields, comments, and placeholder markers.
+- `references/plugin-manifest-schemas.md` -- Side-by-side schema comparison of Claude Code, Codex, and Cursor plugin.json structures with translation rules.
 - `examples/dual-platform-directory-tree.md` -- Annotated directory trees showing both Pattern A (root-level, skill pack) and Pattern B (adapters directory, full plugin) with shared vs platform-specific files clearly marked.
