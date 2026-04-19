@@ -102,6 +102,12 @@ project/
 | Does it need per-platform install scripts or path substitution? | **B: Adapters** | ↓ |
 | Are SKILL.md files substantially different per platform? | **C: Triplication** | **B: Adapters** (default for complex projects) |
 
+## Platform Landscape
+
+The agent ecosystem spans 15+ platforms. Claude Code and Codex are the primary targets with stable plugin formats. OpenCode and Cursor are stable secondary targets. All other platforms are emerging or experimental.
+
+Before creating adapters, consult `references/platform-paths.md` for the full platform install path table, discovery status, and cross-platform conventions. Key insight: **AGENTS.md is the only universal cross-platform instruction file** — every platform reads it.
+
 ## Five-Layer Compatibility Matrix
 
 Before writing any adapter, assess which layers of your project can be shared and which require per-platform work.
@@ -464,6 +470,7 @@ Follow these rules whenever you create or modify platform adapters.
 
 Load these files on demand when you need deeper detail. Do not load all of them upfront.
 
+- `references/platform-paths.md` -- Full 15+ platform install path table with global/local paths, manifest entry points, discovery status, and cross-platform conventions.
 - `references/compatibility-matrix.md` -- Full five-layer compatibility analysis with per-layer detail on what is shared, what is platform-specific, and the main differences.
 - `references/claude-code-plugin-json-template.md` -- Complete Claude Code plugin.json template with all fields, comments, and placeholder markers.
 - `references/codex-plugin-json-template.md` -- Complete Codex plugin.json template with all fields, comments, and placeholder markers.
