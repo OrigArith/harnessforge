@@ -74,16 +74,29 @@ Execute these steps in order when scaffolding a new project.
 
 3. **Generate directory tree.** Read `references/directory-template.md` for the chosen template. Create all directories using `mkdir -p`. For Template A: `src/tools/`, `src/resources/`, `src/utils/`, `tests/unit/`, `tests/contract/`, `tests/smoke/`, `config/`, `adapters/`, `.github/workflows/`. For Template B: `skills/<skill-name>/scripts/`, `skills/<skill-name>/references/`, `skills/<skill-name>/examples/`, `.claude-plugin/`, `.codex-plugin/`, `.codex/`, `tests/skill-smoke/`, `.github/workflows/`. For Template C: both `skills/` and `src/` subtrees plus `adapters/`, `tests/integration/`.
 
-4. **Create platform directories.** For Template A/C: create `adapters/<platform>/` for each target platform. For Template B: create `.claude-plugin/`, `.codex-plugin/`, and `.codex/` at the project root (the repo IS the plugin root — no adapters/ directory). Only create directories for platforms the user explicitly requested.
+4. **Create platform directories.** For each target platform the user specified, create the required adapter structure. Only create directories for platforms the user explicitly requested.
 
-5. **Generate root-level files.** Create each file listed in the "Root-Level File Requirements" table below. Use the templates in `references/` as starting points:
+   **Template A/C** (adapters/ directory):
+   - `claude-code` → `adapters/claude/` containing `CLAUDE.md`, `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`
+   - `codex` → `adapters/codex/` containing `.codex-plugin/plugin.json`, `.codex/INSTALL.md`, `agents/openai.yaml`
+   - `opencode` → `adapters/opencode/` containing `opencode.jsonc`
+   - `cursor` → `adapters/cursor/` containing `.cursor-plugin/plugin.json`
+
+   **Template B** (repo root = plugin root, no adapters/ directory):
+   - `claude-code` → `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json` at root
+   - `codex` → `.codex-plugin/plugin.json`, `.codex/INSTALL.md` at root
+   - `opencode` → `opencode.jsonc` at root
+   - `cursor` → `.cursor-plugin/plugin.json` at root
+
+5. **Generate root-level files.** Create every file marked "Required" in the "Root-Level File Requirements" table below. All of these files must exist — skipping any Required file is a validation failure in Step 10. Use the templates in `references/` as starting points:
    - Read `references/readme-template.md` when creating `README.md`.
    - Read `references/contributing-template.md` when creating `CONTRIBUTING.md`.
    - Read `references/security-template.md` when creating `SECURITY.md`.
    - For `AGENTS.md`, read `references/agents-md-template.md` and apply the Directive File Rules below.
-   - For `CLAUDE.md`, read `references/claude-md-template.md` and apply the CLAUDE.md Import Shell rules below.
+   - For `CLAUDE.md` (required when targeting claude-code): read `references/claude-md-template.md` and apply the CLAUDE.md Import Shell rules below. Place in `adapters/claude/` for Template A/C, at root for Template B.
    - For `LICENSE`, use the full text of the chosen license (MIT or Apache-2.0).
    - For `CHANGELOG.md`, create a stub with the header and an "Unreleased" section.
+   - For `CODE_OF_CONDUCT.md`, use the Contributor Covenant v2.1.
 
 6. **Generate config/default.json.** Include all configurable fields with safe defaults. For MCP servers, include: `capabilities` (with advanced features defaulting to `false`), `security.allowed_hosts` (default `[]`), `security.require_approval_for` (default `["write", "delete"]`), and `mcp.transport` (default `"stdio"`).
 
@@ -93,7 +106,14 @@ Execute these steps in order when scaffolding a new project.
 
 9. **Count root entries.** Run `ls -A <project-root> | wc -l` and verify the count is 15 or fewer. If it exceeds 15, consolidate files into subdirectories until compliant.
 
-10. **Run validation.** Verify: (a) `config/default.json` exists and is valid JSON (Template A/C only); (b) `README.md` contains install commands in its first 30 lines; (c) manifest placement matches template — root-level for Template B, `adapters/` for Template A/C; (d) `skills/` and `src/` contain no imports from platform-specific directories.
+10. **Run validation.** Verify:
+    (a) `config/default.json` exists and is valid JSON (Template A/C only).
+    (b) `README.md` contains install commands in its first 30 lines.
+    (c) Manifest placement matches template — root-level for Template B, `adapters/` for Template A/C.
+    (d) `skills/` and `src/` contain no imports from platform-specific directories.
+    (e) If targeting claude-code: `CLAUDE.md` exists (in `adapters/claude/` for A/C, at root for B). AGENTS.md Project Overview names "Claude Code" as a target platform.
+    (f) Every Required file from the Root-Level File Requirements table exists. Every command in AGENTS.md Build and Test section is executable.
+    (g) All GitHub Actions in `.github/workflows/` use SHA-pinned references (no floating `@v4` tags).
 
 ## Six Good Patterns / Six Anti-Patterns
 
@@ -121,13 +141,14 @@ Execute these steps in order when scaffolding a new project.
 |---|---|---|---|
 | `README.md` | Required | Project entry point. One-liner + install + first run. | `references/readme-template.md` |
 | `LICENSE` | Required | Open-source license text. | Use MIT or Apache-2.0 full text |
-| `CONTRIBUTING.md` | Strongly recommended | Contribution guide with agent-ecosystem specifics. | `references/contributing-template.md` |
-| `SECURITY.md` | Strongly recommended | Security boundary declaration + vulnerability disclosure. | `references/security-template.md` |
-| `CHANGELOG.md` | Recommended | Version change log in conventional commits format. | Create stub with Unreleased section |
+| `CONTRIBUTING.md` | Required | Contribution guide with agent-ecosystem specifics. | `references/contributing-template.md` |
+| `SECURITY.md` | Required | Security boundary declaration + vulnerability disclosure. | `references/security-template.md` |
+| `CHANGELOG.md` | Required | Version change log in Keep a Changelog format. | Create stub with Unreleased section |
+| `CODE_OF_CONDUCT.md` | Required | Community standards. | Contributor Covenant v2.1 |
 | `AGENTS.md` | Required | Cross-platform shared agent instruction file. | `references/agents-md-template.md` |
-| `CLAUDE.md` | Recommended (required if targeting Claude Code) | Claude Code entry shell. References AGENTS.md + Claude-specific additions. | `references/claude-md-template.md` |
-| `config/default.json` | Required | Single source of truth for project configuration. | Generate per Rule 3 |
-| `example.env` | Recommended | Env var template without real secrets. | Generate with placeholder comments |
+| `CLAUDE.md` | Required if targeting claude-code | Claude Code entry shell. References AGENTS.md + Claude-specific additions. | `references/claude-md-template.md` |
+| `config/default.json` | Required (Template A/C) | Single source of truth for project configuration. | Generate per Rule 3 |
+| `config/example.env` | Recommended | Env var template without real secrets. | Generate with placeholder comments |
 
 ## Directive File Rules
 
