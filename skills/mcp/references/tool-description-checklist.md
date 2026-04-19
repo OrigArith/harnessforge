@@ -48,11 +48,15 @@ Use this checklist to review every MCP tool description before release. A tool t
 
 ---
 
+## Annotations & Output Schema (2 rules)
+
+- [ ] **15. Annotations are set.** The tool includes `annotations` with at least `readOnlyHint` and `destructiveHint`. Omitting annotations forces clients to treat every tool as potentially destructive. (See Required Execution Rule 9.)
+
+- [ ] **16. `outputSchema` is defined.** The tool declares `outputSchema` so clients can parse structured results programmatically. (See Required Execution Rule 10.)
+
+---
+
 ## Bonus (recommended but not blocking)
-
-- [ ] **15. `outputSchema` is defined.** The tool declares `outputSchema` so clients can parse structured results.
-
-- [ ] **16. Annotations are set.** The tool includes `annotations` with at least `readOnlyHint` and `destructiveHint`.
 
 - [ ] **17. Namespace prefix for multi-server contexts.** If the server may coexist with others offering similar tools, the `name` uses a namespace prefix: `github_create_issue` vs `gitlab_create_issue`.
 
@@ -62,7 +66,7 @@ Use this checklist to review every MCP tool description before release. A tool t
 
 ## How to Use This Checklist
 
-1. Before releasing any MCP server version, run through items 1-14 for every tool.
+1. Before releasing any MCP server version, run through items 1-16 for every tool. Items 1-16 are all mandatory.
 2. Fix all mandatory failures before release.
-3. Track bonus items (15-18) as improvements for the next version.
+3. Track bonus items (17-18) as improvements for the next version.
 4. When reviewing an existing MCP server, score it against this checklist and report the pass rate.

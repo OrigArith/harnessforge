@@ -108,7 +108,7 @@ Every tool must define `inputSchema` as a JSON Schema object with `type: "object
 
 ### Output schema
 
-Prefer defining `outputSchema` alongside `inputSchema`. This lets clients parse structured results without relying on free-text extraction.
+Define `outputSchema` alongside `inputSchema` (Required — see Rule 10). This lets clients parse structured results without relying on free-text extraction.
 
 ```json
 {
@@ -229,6 +229,12 @@ Follow these rules on every MCP server project. They are non-negotiable.
 7. **Treat parameter renames as breaking changes.** Accept both old and new parameter names during a deprecation window.
 
 8. **Filter all external content before returning it.** Strip HTML, executable fragments, and unnecessary fields. Return only what the agent needs.
+
+9. **Every tool must include annotations.** At minimum, declare `readOnlyHint` and `destructiveHint`. These annotations enable clients to show appropriate approval UIs and implement safety policies. Omitting annotations forces the client to treat every tool as potentially destructive.
+
+10. **Every tool must define outputSchema.** Agents parse structured results more reliably than free text. Define the output schema alongside the input schema so clients can validate and extract fields programmatically.
+
+11. **All shell commands must use execFile/spawn with argument arrays.** Never construct commands via string concatenation or template literals. This prevents command injection when tool parameters contain user-controlled input.
 
 ---
 
