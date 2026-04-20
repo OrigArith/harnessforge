@@ -176,6 +176,35 @@ When the server implements OAuth 2.1, the client handles the auth flow automatic
 
 ---
 
+## Claude Code Installation
+
+Claude Code uses two separate files for MCP server management. Do NOT put `mcpServers` in `settings.json` — it will be rejected.
+
+| File | Purpose | Location |
+|------|---------|----------|
+| `.mcp.json` | Server startup commands and env vars | Project root (project-scoped) or `~/.claude/.mcp.json` (global) |
+| `settings.json` | Approve/enable servers via `mcpServers` allowlist | `~/.claude/settings.json` or `.claude/settings.json` |
+
+**Workflow:**
+
+1. Define the server in `.mcp.json` (command, args, env).
+2. Claude Code reads `.mcp.json` automatically on startup — no manual approval step needed for project-scoped servers.
+3. If you need to allow a server globally or manage permissions, use `settings.json`:
+
+```json
+{
+  "permissions": {
+    "allow": [
+      "mcp__your_server__tool_name"
+    ]
+  }
+}
+```
+
+**Common mistake**: Adding `"mcpServers": {...}` to `settings.json` — this field is not recognized there. Server definitions always go in `.mcp.json`.
+
+---
+
 ## Platform-Specific Config Generation
 
 The `.mcp.json` format is native to Claude Code and OpenClaw. For other platforms, convert:

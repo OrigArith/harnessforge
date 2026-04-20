@@ -112,7 +112,7 @@ For write operations (create, update, delete, send), accept an optional `idempot
 
 ### Output schema
 
-Define `outputSchema` alongside `inputSchema` (Required — see Rule 10). This lets clients parse structured results without relying on free-text extraction.
+Define `outputSchema` alongside `inputSchema` when your server can return `structuredContent` in `CallToolResult`. This lets clients parse structured results without relying on free-text extraction.
 
 ```json
 {
@@ -126,6 +126,8 @@ Define `outputSchema` alongside `inputSchema` (Required — see Rule 10). This l
   }
 }
 ```
+
+**Client compatibility note**: Some clients (notably Claude Code) enforce strict pairing — if `outputSchema` is declared, the response must include `structuredContent`. If your SDK or runtime does not support `structuredContent`, omit `outputSchema` and return well-structured JSON in `TextContent` instead. The agent can still parse it; you just lose client-side schema validation.
 
 Filter, paginate, and truncate output. Never return raw HTML, full email bodies, or unprocessed external content. Extract only the necessary fields.
 
@@ -222,7 +224,7 @@ Follow these rules on every MCP server project. They are non-negotiable.
 
 2. **Never treat MCP as a security boundary.** Annotations are hints. Clients may ignore `readOnlyHint`. Validate permissions server-side.
 
-3. **Test every tool with MCP Inspector before release.** Verify: initialize succeeds, capability negotiation aligns, each tool returns expected output on valid input, each tool returns structured errors on invalid input.
+3. **Test with MCP Inspector immediately after first runnable server — not just before release.** Run Inspector as soon as `initialize` succeeds (even with partial tool coverage). This catches schema, outputSchema, and capability negotiation issues before you invest time in integration testing with a client. Verify: initialize succeeds, capability negotiation aligns, each tool returns expected output on valid input, each tool returns structured errors on invalid input.
 
 4. **Use `.mcp.json` as the shared configuration source.** Place it in the project root. It is the closest thing to a cross-platform standard for MCP server configuration. Generate platform-specific configs from it.
 
@@ -236,13 +238,29 @@ Follow these rules on every MCP server project. They are non-negotiable.
 
 9. **Every tool must include annotations.** At minimum, declare `readOnlyHint` and `destructiveHint`. These annotations enable clients to show appropriate approval UIs and implement safety policies. Omitting annotations forces the client to treat every tool as potentially destructive.
 
-10. **Every tool must define outputSchema.** Agents parse structured results more reliably than free text. Define the output schema alongside the input schema so clients can validate and extract fields programmatically.
+10. **Every tool should define outputSchema — with client-specific caveats.** Agents parse structured results more reliably than free text. Define the output schema alongside the input schema so clients can validate and extract fields programmatically. **Claude Code caveat**: Claude Code validates the outputSchema/structuredContent pairing at runtime. If a tool declares `outputSchema`, the `CallToolResult` must include a `structuredContent` field matching that schema — returning only `TextContent` will trigger a validation error. If your server cannot return `structuredContent` (e.g., the SDK does not support it yet), omit `outputSchema` entirely rather than declaring it and returning only text.
 
 11. **All shell commands must use execFile/spawn with argument arrays.** Never construct commands via string concatenation or template literals. This prevents command injection when tool parameters contain user-controlled input.
 
 ---
 
 ## Diagnose & Test
+
+### Development Checkpoint (run early, not just at release)
+
+After your server can start and respond to `initialize`, immediately run MCP Inspector:
+
+```bash
+# First checkpoint — right after server.py / index.ts compiles
+npx @modelcontextprotocol/inspector {{YOUR_SERVER_START_COMMAND}}
+```
+
+Check these three things before writing more tools:
+1. `initialize` returns valid `protocolVersion` and `capabilities`
+2. `tools/list` shows your tools with correct schemas
+3. One happy-path call succeeds with expected response structure
+
+If `outputSchema` triggers a validation error here, the client will also reject it — fix now rather than after full integration.
 
 ### Quick Diagnosis
 
@@ -332,3 +350,4 @@ Load these references as needed for detailed templates and examples:
 - **`.mcp.json` configuration template**: `references/mcp-json-template.md`
 - **Advanced capabilities** (Sampling, Elicitation, Tasks): `references/advanced-capabilities.md`
 - **Tool design patterns and anti-patterns**: `examples/tool-design-patterns.md`
+- When building with Python `mcp` SDK: `references/python-sdk-quickstart.md`
